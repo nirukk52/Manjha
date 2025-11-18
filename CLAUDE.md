@@ -1,0 +1,3 @@
+- Always use .claude/skills/theme-factory for theming. Current selected is Botanical Garden.
+- Always use .claude/skills/skill-creator to create new skills.
+- Always use .claude/skills/mcp-builder to create new mcps.
