@@ -30,31 +30,32 @@ body {
 		linear-gradient(180deg, var(--color-bg-0) 0%, var(--color-bg-1) 15%, var(--color-bg-2) 50%);
 }
 
-h1,
-h2,
-p {
+/* Scope base styles to non-trading-journal pages */
+:not(.trading-journal-wrapper) h1,
+:not(.trading-journal-wrapper) h2,
+:not(.trading-journal-wrapper) p {
 	font-weight: 400;
 }
 
-p {
+:not(.trading-journal-wrapper) p {
 	line-height: 1.5;
 }
 
-a {
+:not(.trading-journal-wrapper) a {
 	color: var(--color-theme-1);
 	text-decoration: none;
 }
 
-a:hover {
+:not(.trading-journal-wrapper) a:hover {
 	text-decoration: underline;
 }
 
-h1 {
+:not(.trading-journal-wrapper) h1 {
 	font-size: 2rem;
 	text-align: center;
 }
 
-h2 {
+:not(.trading-journal-wrapper) h2 {
 	font-size: 1rem;
 }
 

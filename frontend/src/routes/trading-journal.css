@@ -1,0 +1,283 @@
+@custom-variant dark (&:is(.dark *));
+
+/* Retro-Modern Design System - Extracted from Figma */
+:root {
+  --font-size: 16px;
+  
+  /* Retro Pastel Colors */
+  --retro-blue: #b4d4e1;
+  --retro-tan: #d9b89c;
+  --retro-pink: #e5c9c9;
+  --retro-lavender: #d4c4e1;
+  --retro-mint: #c4e1d4;
+  --retro-dark: #2d2d2d;
+  --retro-gray: #5a5a5a;
+  --retro-light-gray: #e5e5e5;
+  
+  /* Theme Mappings */
+  --background: #ffffff;
+  --foreground: var(--retro-dark);
+  --card: #ffffff;
+  --card-foreground: var(--retro-dark);
+  --popover: #ffffff;
+  --popover-foreground: var(--retro-dark);
+  --primary: var(--retro-dark);
+  --primary-foreground: #ffffff;
+  --secondary: var(--retro-blue);
+  --secondary-foreground: var(--retro-dark);
+  --muted: #f5f5f5;
+  --muted-foreground: var(--retro-gray);
+  --accent: var(--retro-blue);
+  --accent-foreground: var(--retro-dark);
+  --destructive: var(--retro-pink);
+  --destructive-foreground: var(--retro-dark);
+  --border: #000000;
+  --input: transparent;
+  --input-background: #ffffff;
+  --switch-background: var(--retro-light-gray);
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --ring: var(--retro-dark);
+  
+  /* Chart Colors - Retro Pastels */
+  --chart-1: var(--retro-blue);
+  --chart-2: var(--retro-tan);
+  --chart-3: var(--retro-pink);
+  --chart-4: var(--retro-lavender);
+  --chart-5: var(--retro-mint);
+  
+  --radius: 0.875rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: var(--retro-dark);
+  --sidebar-primary: var(--retro-dark);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--retro-blue);
+  --sidebar-accent-foreground: var(--retro-dark);
+  --sidebar-border: #000000;
+  --sidebar-ring: var(--retro-dark);
+}
+
+.dark {
+  --background: #1a1a1a;
+  --foreground: #ffffff;
+  --card: var(--retro-dark);
+  --card-foreground: #ffffff;
+  --popover: var(--retro-dark);
+  --popover-foreground: #ffffff;
+  --primary: var(--retro-blue);
+  --primary-foreground: var(--retro-dark);
+  --secondary: var(--retro-lavender);
+  --secondary-foreground: var(--retro-dark);
+  --muted: #333333;
+  --muted-foreground: #a0a0a0;
+  --accent: var(--retro-mint);
+  --accent-foreground: var(--retro-dark);
+  --destructive: var(--retro-pink);
+  --destructive-foreground: var(--retro-dark);
+  --border: #000000;
+  --input: var(--retro-dark);
+  --ring: var(--retro-blue);
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --chart-1: var(--retro-blue);
+  --chart-2: var(--retro-tan);
+  --chart-3: var(--retro-pink);
+  --chart-4: var(--retro-lavender);
+  --chart-5: var(--retro-mint);
+  --sidebar: #1a1a1a;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: var(--retro-blue);
+  --sidebar-primary-foreground: var(--retro-dark);
+  --sidebar-accent: var(--retro-lavender);
+  --sidebar-accent-foreground: var(--retro-dark);
+  --sidebar-border: #000000;
+  --sidebar-ring: var(--retro-blue);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/**
+ * Base typography. This is not applied to elements which have an ancestor with a Tailwind text class.
+ */
+@layer base {
+  :where(:not(:has([class*=' text-']), :not(:has([class^='text-'])))) {
+    h1 {
+      font-size: var(--text-2xl);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.25;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    h2 {
+      font-size: var(--text-xl);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.33;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    h3 {
+      font-size: var(--text-lg);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.33;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    h4 {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.4;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    p {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.625;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    label {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.43;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    button {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-medium);
+      line-height: 1.5;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    input {
+      font-size: var(--text-base);
+      font-weight: var(--font-weight-normal);
+      line-height: 1.5;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+  }
+}
+
+html {
+  font-size: var(--font-size);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Make all numbers bold and clear */
+body {
+  font-variant-numeric: tabular-nums;
+}
+
+* {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Hide scrollbar */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Shimmer animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+/* Bold numbers specifically */
+.font-numeric,
+[class*="pnl"],
+[class*="price"],
+[class*="amount"],
+span:has(+ [class*="dollar"]),
+span:has(+ [class*="percent"]) {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Retro button shadow effects */
+.shadow-retro {
+  box-shadow: 6px 6px 0px 0px #000000;
+}
+
+.shadow-retro-sm {
+  box-shadow: 4px 4px 0px 0px #000000;
+}
+
+.shadow-retro-xs {
+  box-shadow: 2px 2px 0px 0px #000000;
+}
+
+.shadow-retro-lg {
+  box-shadow: 8px 8px 0px 0px #000000;
+}
+
+/* Hover states for retro buttons */
+.btn-retro:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 4px 4px 0px 0px #000000;
+}
+
+.btn-retro:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
