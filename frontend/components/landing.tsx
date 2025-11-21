@@ -3,6 +3,7 @@
 import { ArrowRight, BarChart3, Zap, BookOpen } from 'lucide-react';
 import { Button } from './ui/button';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 /**
  * Landing Page Component
@@ -10,7 +11,7 @@ import { motion } from 'framer-motion';
  */
 
 interface LandingProps {
-  onEnter: () => void;
+  onEnter?: () => void;
 }
 
 export function Landing({ onEnter }: LandingProps) {
@@ -223,13 +224,14 @@ export function Landing({ onEnter }: LandingProps) {
 
             {/* CTA */}
             <div className="pt-4">
-              <Button
-                onClick={onEnter}
-                className="group px-10 py-8 text-xl bg-[#18181b] hover:bg-[#27272a] text-white border-4 border-black shadow-[8px_8px_0px_0px_#000000] hover:shadow-[4px_4px_0px_0px_#000000] transition-all hover:translate-x-[4px] hover:translate-y-[4px] rounded-2xl"
-              >
-                Open Dashboard
-                <ArrowRight className="ml-2 size-6 group-hover:translate-x-1 transition-transform" />
-              </Button>
+              <Link href="/dashboard">
+                <Button
+                  className="group px-10 py-8 text-xl bg-[#18181b] hover:bg-[#27272a] text-white border-4 border-black shadow-[8px_8px_0px_0px_#000000] hover:shadow-[4px_4px_0px_0px_#000000] transition-all hover:translate-x-[4px] hover:translate-y-[4px] rounded-2xl"
+                >
+                  Open Dashboard
+                  <ArrowRight className="ml-2 size-6 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -281,13 +283,14 @@ export function Landing({ onEnter }: LandingProps) {
             <p className="text-xl text-[#5a5a5a] mb-8 max-w-2xl mx-auto">
               Stop trading blind. Start building discipline, clarity, and a portfolio that learns with you.
             </p>
-            <Button
-              onClick={onEnter}
-              className="group px-10 py-8 text-xl bg-[#18181b] hover:bg-[#27272a] text-white border-4 border-black shadow-[8px_8px_0px_0px_#000000] hover:shadow-[4px_4px_0px_0px_#000000] transition-all hover:translate-x-[4px] hover:translate-y-[4px] rounded-2xl"
-            >
-              Get Started
-              <ArrowRight className="ml-2 size-6 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            <Link href="/dashboard">
+              <Button
+                className="group px-10 py-8 text-xl bg-[#18181b] hover:bg-[#27272a] text-white border-4 border-black shadow-[8px_8px_0px_0px_#000000] hover:shadow-[4px_4px_0px_0px_#000000] transition-all hover:translate-x-[4px] hover:translate-y-[4px] rounded-2xl"
+              >
+                Get Started
+                <ArrowRight className="ml-2 size-6 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
