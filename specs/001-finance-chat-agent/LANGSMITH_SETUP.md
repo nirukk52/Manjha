@@ -27,26 +27,22 @@ encore secret list
 
 ### 3. Set LangSmith Environment Variables
 
-**Option A: Via Encore Secrets (Recommended)**
+**Option A: Via Environment Variables (Recommended for LangGraph Studio)**
 
 ```bash
-# Set LangSmith API key
-echo "ls__your_api_key" | encore secret set --type local LANGSMITH_API_KEY
-
-# Enable tracing
-echo "true" | encore secret set --type local LANGCHAIN_TRACING_V2
-
-# Optional: Set project name
-echo "manjha-finance-agent" | encore secret set --type local LANGCHAIN_PROJECT
+# Set these in your shell or .env file in backend/agent-orchestrator directory
+export LANGSMITH_TRACING="true"
+export LANGSMITH_API_KEY="ls__your_api_key"
+export LANGSMITH_PROJECT="manjha-finance-agent"
 ```
 
 **Option B: Via .env file**
 
-Create `.env` in backend directory:
+Create `.env` in `backend/agent-orchestrator` directory:
 ```bash
-LANGCHAIN_TRACING_V2=true
+LANGSMITH_TRACING=true
 LANGSMITH_API_KEY=ls__your_key_here
-LANGCHAIN_PROJECT=manjha-finance-agent
+LANGSMITH_PROJECT=manjha-finance-agent
 ```
 
 ### 4. Restart Encore
@@ -97,15 +93,15 @@ After making a request, go to https://smith.langchain.com/:
    - You should see a new trace appear for your query!
 
 3. If streaming works but no traces appear in LangSmith:
-   - Verify `LANGCHAIN_TRACING_V2=true` is set
-   - Check `LANGSMITH_API_KEY` is correct
+   - Verify `LANGSMITH_TRACING=true` is set
+   - Check `LANGSMITH_API_KEY` is correct (starts with `ls__`)
    - Restart Encore after setting environment variables
 
 ## Troubleshooting
 
 **No traces showing?**
-- Check `LANGCHAIN_TRACING_V2=true` is set
-- Verify `LANGSMITH_API_KEY` is correct
+- Check `LANGSMITH_TRACING=true` is set (not `LANGCHAIN_TRACING_V2`)
+- Verify `LANGSMITH_API_KEY` is correct and starts with `ls__`
 - Restart Encore after setting env vars
 
 **Want to trace classification too?**
