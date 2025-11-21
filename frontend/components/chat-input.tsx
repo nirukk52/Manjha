@@ -1,14 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { Send, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Send, X, AlertCircle } from 'lucide-react';
 import { Button } from './ui/button';
-import { generateResponse } from '@/utils/responseGenerator';
 import { DirectAnswer } from './direct-answer';
 import { ChartWidget } from './chart-widget';
 import { MentalModelFlow } from './mental-model-flow';
 import { PinnedItem } from '@/types';
 import { motion, AnimatePresence } from 'framer-motion';
+import { sendChatMessage, generateSessionId } from '@/lib/api-client';
+import { useChatStream } from '@/hooks/use-chat-stream';
 
 /**
  * ChatInput Component
@@ -30,15 +31,27 @@ interface ConversationItem {
 
 export function ChatInput({ onOutputGenerated, onPinItem }: ChatInputProps) {
   const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
   const [activeTab, setActiveTab] = useState<'answer' | 'chart' | 'mental-model'>('answer');
   const [isExpanded, setIsExpanded] = useState(true);
+  const [sessionId] = useState(() => generateSessionId());
+  const [error, setError] = useState<string | null>(null);
+  
+  // Use the streaming hook
+  const { content: streamingContent, state: streamState, error: streamError, startStream, reset: resetStream } = useChatStream();
 
   const hasMessages = conversation.length > 0;
-  const currentOutput = conversation.length > 0 ? conversation[conversation.length - 1].output : null;
+  const isLoading = streamState === 'connecting' || streamState === 'streaming';
+  
+  // Current output - either the streamed content or the last conversation item
+  const currentOutput = streamState === 'streaming' || streamState === 'complete' 
+    ? { answer: streamingContent }
+    : conversation.length > 0 ? conversation[conversation.length - 1].output : null;
 
-  const handleSend = () => {
+  /**
+   * Handle sending a message to the backend
+   */
+  const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
     const userMessage: ConversationItem = {
@@ -48,28 +61,45 @@ export function ChatInput({ onOutputGenerated, onPinItem }: ChatInputProps) {
     };
 
     setConversation(prev => [...prev, userMessage]);
-    setIsLoading(true);
+    setError(null);
 
     const currentInput = input;
     setInput('');
 
-    // Generate AI response
-    setTimeout(() => {
-      const response = generateResponse(currentInput);
-      
+    try {
+      // Send message to backend
+      const response = await sendChatMessage({
+        sessionId,
+        content: currentInput,
+        userId: 'anonymous', // MVP: stub user ID
+      });
+
+      // Start streaming the response
+      startStream(response.streamUrl);
+      setIsExpanded(true);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to send message';
+      setError(errorMessage);
+      console.error('Failed to send message:', err);
+    }
+  };
+
+  /**
+   * Effect to handle stream completion - save to conversation history
+   */
+  useEffect(() => {
+    if (streamState === 'complete' && streamingContent) {
       const assistantMessage: ConversationItem = {
         type: 'assistant',
-        content: response.answer || 'Response generated',
-        output: response,
+        content: streamingContent,
+        output: { answer: streamingContent },
         timestamp: new Date()
       };
 
       setConversation(prev => [...prev, assistantMessage]);
-      onOutputGenerated(response);
-      setIsLoading(false);
-      setIsExpanded(true);
-    }, 500);
-  };
+      onOutputGenerated({ answer: streamingContent });
+    }
+  }, [streamState, streamingContent, onOutputGenerated]);
 
   const handlePinChart = () => {
     if (!currentOutput) return;
@@ -94,9 +124,14 @@ export function ChatInput({ onOutputGenerated, onPinItem }: ChatInputProps) {
     });
   };
 
+  /**
+   * Handle closing the chat - reset everything
+   */
   const handleClose = () => {
+    resetStream();
     setConversation([]);
     setInput('');
+    setError(null);
   };
 
   const quickQuestions = [
@@ -138,12 +173,57 @@ export function ChatInput({ onOutputGenerated, onPinItem }: ChatInputProps) {
                 <div className="px-6 py-3 rounded-full border-2 border-black bg-[#d4d4d8] inline-block shadow-[3px_3px_0px_0px_#000000]">
                   <p className="text-sm text-[#2d2d2d]">{conversation.filter(item => item.type === 'user').pop()?.content}</p>
                 </div>
+
+                {/* Error Display */}
+                {(error || streamError) && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-4 px-4 py-3 rounded-lg border-2 border-black bg-[#fca5a5] shadow-[3px_3px_0px_0px_#000000] flex items-start gap-3"
+                  >
+                    <AlertCircle className="size-5 text-[#2d2d2d] flex-shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-[#2d2d2d]">Connection Error</p>
+                      <p className="text-xs text-[#2d2d2d]/80 mt-1">
+                        {error || streamError?.message}
+                      </p>
+                      {streamError?.retryable && (
+                        <button
+                          onClick={() => {
+                            setError(null);
+                            const lastMessage = conversation.filter(item => item.type === 'user').pop();
+                            if (lastMessage) {
+                              handleSend();
+                            }
+                          }}
+                          className="mt-2 text-xs text-[#2d2d2d] underline hover:no-underline"
+                        >
+                          Try Again
+                        </button>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Loading Indicator */}
+                {(streamState === 'connecting' || (isLoading && streamState !== 'streaming')) && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="mt-4 px-4 py-2 rounded-lg border-2 border-black bg-[#d4c4e1]/30 shadow-[2px_2px_0px_0px_#000000]"
+                  >
+                    <p className="text-xs text-[#2d2d2d]/70 flex items-center gap-2">
+                      <span className="animate-pulse">●</span>
+                      Connecting to agent...
+                    </p>
+                  </motion.div>
+                )}
               </div>
 
               {/* Answer Area - Full White Background */}
               <div className="flex-1 overflow-y-auto bg-white">
                 <div className="h-full">
-                  {activeTab === 'answer' && <DirectAnswer output={currentOutput} />}
+                  {activeTab === 'answer' && <DirectAnswer output={currentOutput} isStreaming={streamState === 'streaming'} />}
                   {activeTab === 'chart' && <ChartWidget output={currentOutput} onPin={handlePinChart} />}
                   {activeTab === 'mental-model' && <MentalModelFlow output={currentOutput} onPin={handlePinModel} />}
                 </div>
