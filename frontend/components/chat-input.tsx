@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Send, X, ChevronDown, ChevronUp, Pin } from 'lucide-react';
+import { Send, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { generateResponse } from '@/utils/responseGenerator';
 import { DirectAnswer } from './direct-answer';
@@ -12,7 +12,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 /**
  * ChatInput Component
- * Floating chat interface with expandable responses, tabs, and pinning functionality
+ * Floating chat interface that expands fullscreen with tabs and pinning functionality
+ * Based on Figma Chat-Driven Trading Journal design
  */
 
 interface ChatInputProps {
@@ -110,132 +111,109 @@ export function ChatInput({ onOutputGenerated, onPinItem }: ChatInputProps) {
   ];
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-20 w-full max-w-3xl px-6">
-      <motion.div
-        initial={false}
-        animate={{
-          height: hasMessages ? 'calc(100vh - 3rem)' : 'auto',
-        }}
-        transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-        className="border-2 border-[#a1a1aa] rounded-[32px] bg-[#fafafa] mt-4 flex flex-col overflow-hidden"
-      >
-        {/* Conversation Area - Only show when there are messages */}
+    <div className={`fixed left-1/2 -translate-x-1/2 z-20 transition-all duration-300 ${
+      hasMessages ? 'top-6 bottom-6 w-[calc(100vw-3rem)]' : 'bottom-6 w-full max-w-3xl px-6'
+    }`}>
+      <div className="border border-[#a1a1aa] rounded-[32px] bg-[#fafafa] flex flex-col h-full">
+        {/* Expanded White Conversation Container - Only visible when there are messages */}
         <AnimatePresence>
           {hasMessages && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
               className="flex-1 flex flex-col overflow-hidden"
             >
-              {/* Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b-2 border-black bg-[#b4d4e1]">
-                <button
-                  onClick={() => setIsExpanded(!isExpanded)}
-                  className="flex items-center gap-2 text-[#2d2d2d] hover:text-[#18181b] transition-colors"
-                >
-                  {isExpanded ? <ChevronDown className="size-5" /> : <ChevronUp className="size-5" />}
-                  <span className="text-sm font-black">
-                    {isExpanded ? 'Collapse' : 'Expand'} response
-                  </span>
-                </button>
-                
-                <div className="flex items-center gap-2">
-                  {activeTab === 'chart' && (
-                    <Button
-                      onClick={handlePinChart}
-                      size="sm"
-                      variant="ghost"
-                      className="text-xs"
-                    >
-                      <Pin className="size-4 mr-1" />
-                      Pin Chart
-                    </Button>
-                  )}
-                  {activeTab === 'mental-model' && (
-                    <Button
-                      onClick={handlePinModel}
-                      size="sm"
-                      variant="ghost"
-                      className="text-xs"
-                    >
-                      <Pin className="size-4 mr-1" />
-                      Pin Model
-                    </Button>
-                  )}
-                  <Button
-                    onClick={handleClose}
-                    size="sm"
-                    variant="ghost"
-                    className="text-[#2d2d2d] hover:text-[#18181b]"
-                  >
-                    <X className="size-4" />
-                  </Button>
+              {/* Close Button - Top Right */}
+              <button
+                onClick={handleClose}
+                className="absolute top-6 right-6 z-10 bg-[#fca5a5] hover:bg-[#f87171] text-[#2d2d2d] rounded-lg p-2 border-2 border-black shadow-[3px_3px_0px_0px_#000000] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_#000000] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
+              >
+                <X className="size-5" />
+              </button>
+
+              {/* Question Pill at Top */}
+              <div className="px-6 pt-6 pb-4 bg-[#fafafa] rounded-t-[32px]">
+                <div className="px-6 py-3 rounded-full border-2 border-black bg-[#d4d4d8] inline-block shadow-[3px_3px_0px_0px_#000000]">
+                  <p className="text-sm text-[#2d2d2d]">{conversation.filter(item => item.type === 'user').pop()?.content}</p>
                 </div>
               </div>
 
-              {/* Content Area */}
-              {isExpanded && (
-                <div className="flex-1 flex flex-col overflow-hidden bg-white">
-                  {/* User Message */}
-                  <div className="p-6 bg-[#fafafa]">
-                    <div className="flex justify-end">
-                      <div className="max-w-[80%] px-4 py-3 rounded-2xl border-2 border-black bg-[#3f3f46] text-white shadow-[3px_3px_0px_0px_#000000]">
-                        <p className="text-sm">{conversation.filter(item => item.type === 'user').pop()?.content}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Response Content Box */}
-                  <div className="flex-1 overflow-y-auto bg-white">
-                    {activeTab === 'answer' && <DirectAnswer output={currentOutput} />}
-                    {activeTab === 'chart' && <ChartWidget output={currentOutput} onPin={handlePinChart} />}
-                    {activeTab === 'mental-model' && <MentalModelFlow output={currentOutput} onPin={handlePinModel} />}
-                  </div>
-
-                  {/* Tab Pills at Bottom */}
-                  <div className="flex items-center justify-center gap-3 bg-[#fafafa] py-3">
-                    <button
-                      onClick={() => setActiveTab('answer')}
-                      className={`relative px-8 py-3 rounded-full transition-all text-sm border-2 border-black font-black ${
-                        activeTab === 'answer'
-                          ? 'bg-[#d9b89c] text-[#2d2d2d] shadow-[4px_4px_0px_0px_#000000]'
-                          : 'bg-white text-[#5a5a5a] hover:bg-[#f5f5f5] shadow-[2px_2px_0px_0px_#000000]'
-                      }`}
-                    >
-                      Answer
-                    </button>
-                    <button
-                      onClick={() => setActiveTab('chart')}
-                      className={`relative px-8 py-3 rounded-full transition-all text-sm border-2 border-black font-black ${
-                        activeTab === 'chart'
-                          ? 'bg-[#e5c9c9] text-[#2d2d2d] shadow-[4px_4px_0px_0px_#000000]'
-                          : 'bg-white text-[#5a5a5a] hover:bg-[#f5f5f5] shadow-[2px_2px_0px_0px_#000000]'
-                      }`}
-                    >
-                      Chart
-                    </button>
-                    <button
-                      onClick={() => setActiveTab('mental-model')}
-                      className={`relative px-8 py-3 rounded-full transition-all text-sm border-2 border-black font-black ${
-                        activeTab === 'mental-model'
-                          ? 'bg-[#d4c4e1] text-[#2d2d2d] shadow-[4px_4px_0px_0px_#000000]'
-                          : 'bg-white text-[#5a5a5a] hover:bg-[#f5f5f5] shadow-[2px_2px_0px_0px_#000000]'
-                      }`}
-                    >
-                      Model
-                    </button>
-                  </div>
+              {/* Answer Area - Full White Background */}
+              <div className="flex-1 overflow-y-auto bg-white">
+                <div className="h-full">
+                  {activeTab === 'answer' && <DirectAnswer output={currentOutput} />}
+                  {activeTab === 'chart' && <ChartWidget output={currentOutput} onPin={handlePinChart} />}
+                  {activeTab === 'mental-model' && <MentalModelFlow output={currentOutput} onPin={handlePinModel} />}
                 </div>
-              )}
+              </div>
+
+              {/* Tab Pills - On white background */}
+              <div className="bg-white px-6 py-3 flex items-center justify-center gap-3">
+                <button
+                  onClick={() => setActiveTab('answer')}
+                  className={`relative px-8 py-2.5 rounded-full transition-all text-sm border-2 border-black ${
+                    activeTab === 'answer'
+                      ? 'bg-[#d9b89c] text-[#2d2d2d] shadow-[4px_4px_0px_0px_#000000]'
+                      : 'bg-[#d4d4d8] text-[#2d2d2d] hover:bg-[#e5e5e5] shadow-[2px_2px_0px_0px_#000000]'
+                  }`}
+                >
+                  Answer
+                </button>
+                <button
+                  onClick={() => setActiveTab('chart')}
+                  className={`relative px-8 py-2.5 rounded-full transition-all text-sm border-2 border-black ${
+                    activeTab === 'chart'
+                      ? 'bg-[#e5c9c9] text-[#2d2d2d] shadow-[4px_4px_0px_0px_#000000]'
+                      : 'bg-[#d4d4d8] text-[#2d2d2d] hover:bg-[#e5e5e5] shadow-[2px_2px_0px_0px_#000000]'
+                  }`}
+                >
+                  Chart
+                </button>
+                <button
+                  onClick={() => setActiveTab('mental-model')}
+                  className={`relative px-8 py-2.5 rounded-full transition-all text-sm border-2 border-black ${
+                    activeTab === 'mental-model'
+                      ? 'bg-[#d4c4e1] text-[#2d2d2d] shadow-[4px_4px_0px_0px_#000000]'
+                      : 'bg-[#d4d4d8] text-[#2d2d2d] hover:bg-[#e5e5e5] shadow-[2px_2px_0px_0px_#000000]'
+                  }`}
+                >
+                  Model
+                </button>
+              </div>
+
+              {/* Input Area - Below tabs on black background */}
+              <div className="bg-[#18181b] px-6 pb-6 pt-3 rounded-b-[32px]">
+                <div className="relative bg-[#27272a] rounded-2xl p-3 flex items-center gap-3 border-2 border-black shadow-[4px_4px_0px_0px_#000000]">
+                  <div className="flex-1 flex items-center gap-2 bg-[#e5e5e5] rounded-lg px-4 py-3 border-2 border-black">
+                    <input
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                      placeholder="Ask a follow-up question..."
+                      className="flex-1 bg-transparent border-none outline-none text-[#2d2d2d] placeholder:text-[#5a5a5a] font-mono"
+                      disabled={isLoading}
+                    />
+                  </div>
+                  <Button 
+                    onClick={handleSend}
+                    disabled={!input.trim() || isLoading}
+                    className="rounded-lg bg-[#3f3f46] hover:bg-[#52525b] text-[#e5e5e5] h-12 px-6 border-2 border-black shadow-[4px_4px_0px_0px_#000000] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_#000000] active:translate-x-[4px] active:translate-y-[4px] active:shadow-none"
+                  >
+                    <Send className="size-5" />
+                  </Button>
+                </div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Input Section - Always visible at bottom */}
-        <div className="p-4">
-          {/* Quick Questions */}
-          {!input && !hasMessages && (
+        {/* Black Chat Input Box - Always at bottom, part of the container */}
+        {!hasMessages && (
+          <div className="p-4">
+            {/* Quick Questions */}
+            {!input && (
             <div className="mb-2 overflow-x-auto scrollbar-hide">
               <div className="flex gap-2 pb-2 min-w-max px-1">
                 {quickQuestions.map((q, i) => {
@@ -255,7 +233,7 @@ export function ChatInput({ onOutputGenerated, onPinItem }: ChatInputProps) {
                     <button
                       key={i}
                       onClick={() => setInput(q)}
-                      className={`relative text-xs px-4 py-2 rounded-lg ${colorClass} text-[#e5e5e5] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0px_0px_#000000] border-2 border-black shadow-[3px_3px_0px_0px_#000000] whitespace-nowrap flex-shrink-0 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none font-medium`}
+                      className={`relative text-xs px-4 py-2 rounded-lg ${colorClass} text-[#e5e5e5] transition-all hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[1px_1px_0px_0px_#000000] border-2 border-black shadow-[3px_3px_0px_0px_#000000] whitespace-nowrap flex-shrink-0 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none`}
                     >
                       {q}
                     </button>
@@ -266,7 +244,7 @@ export function ChatInput({ onOutputGenerated, onPinItem }: ChatInputProps) {
           )}
 
           {/* Chat Input Bar */}
-          <div className="relative bg-[#18181b] rounded-2xl p-3 flex items-center gap-3 border-2 border-black shadow-[6px_6px_0px_0px_#000000]">
+          <div className="relative bg-[#18181b] rounded-2xl p-3 flex items-center gap-3 border-2 border-black shadow-[6px_6px_0px_0px_#000000] w-full max-w-3xl mx-auto shrink-0">
             <div className="flex-1 flex items-center gap-2 bg-[#e5e5e5] rounded-lg px-4 py-3 border-2 border-black">
               <input
                 value={input}
@@ -286,7 +264,8 @@ export function ChatInput({ onOutputGenerated, onPinItem }: ChatInputProps) {
             </Button>
           </div>
         </div>
-      </motion.div>
+        )}
+      </div>
     </div>
   );
 }
