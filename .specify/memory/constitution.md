@@ -1,50 +1,65 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+# Manjha Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Incremental, User-Facing First
+Every feature must demonstrate tangible user value before expanding. Build the smallest functional slice that provides real portfolio insight or risk control. No infrastructure-only work without immediate user benefit. Focus beats scope.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Spec-Driven, Red-Green-Refactor (NON-NEGOTIABLE)
+Every feature starts with a spec. Review existing skills → Write spec → Write E2E test (Red) → Implement (Green) → Refactor → Update skills. Tests are flow-based: "Clicked this → That happened → It shows X → Gucci". TDD is mandatory.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Strongly Typed, No Compromises
+TypeScript with zero `any` types. Kotlin-style enums and type safety throughout. If you can't type it properly, redesign it. Frontend and backend must have explicit interfaces and contracts.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Agent-as-Service (Modular Intelligence)
+Manjha is specialized agents: risk analyzer, portfolio explainer, chart generator, mental model builder. Each agent is independently testable, swappable, improvable. Clear boundaries between orchestration, analysis, visualization.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Discipline Through Code
+Risk features (max drawdown, VaR alerts, position limits) must be bulletproof. Test with edge cases. Fail-safe: err toward blocking trades, not allowing them. Risk prevention is non-negotiable.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Technical Stack & Constraints
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### Backend
+- Encore.ts services (risk engine, portfolio analysis, market data)
+- LangGraph for agent orchestration
+- PostgreSQL for user state
+- Common logging module: all logs in ONE place (no scattered console.log)
+- Every external API: document costs, rate limits, degradation strategy
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+### Frontend
+- Next.js + React + Tailwind + shadcn/ui
+- Frontend is COMPLETELY DUMB: no business logic, pure presentation
+- All intelligence lives in backend agents
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### Testing
+- E2E tests for user flows (required for every feature)
+- Integration tests for API contracts
+- Performance budget: chat < 2s, widget < 500ms
+
+## File Organization
+
+### No Floating Files
+- Scripts: Must be in organized folders, not root
+- Markdown: `/specs` OR `/bug`, `/tech-debt`, `/chore` folders ONLY
+- > 4 files in a folder 2 levels deep → reorganize into subfolders
+
+## Development Workflow
+
+### Every Spec Lifecycle
+1. **Start**: Review relevant skills from `.claude/skills`
+2. **Build**: Red → Green → Refactor cycle
+3. **End**: Update skills based on learnings
+
+### Quality Gates
+- No `any` types in TypeScript (enforced by linter)
+- E2E test passes for user-facing behavior
+- All backend operations logged via common module
+- External API integrations have fallback behavior
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+Constitution supersedes all practices. Features violating these principles must be explicitly justified or redesigned. When in doubt, refer back to Core Principles I-V.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+Incremental delivery: Ship smallest valuable slice → Real users → Learn → Iterate.
+
+**Version**: 1.0.0 | **Ratified**: 2025-11-21 | **Last Amended**: 2025-11-21

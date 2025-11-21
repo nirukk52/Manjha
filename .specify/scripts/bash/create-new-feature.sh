@@ -292,14 +292,20 @@ TEMPLATE="$REPO_ROOT/.specify/templates/spec-template.md"
 SPEC_FILE="$FEATURE_DIR/spec.md"
 if [ -f "$TEMPLATE" ]; then cp "$TEMPLATE" "$SPEC_FILE"; else touch "$SPEC_FILE"; fi
 
+# Create design request file
+DESIGN_TEMPLATE="$REPO_ROOT/.specify/templates/design-request-template.md"
+DESIGN_FILE="$FEATURE_DIR/design-request.md"
+if [ -f "$DESIGN_TEMPLATE" ]; then cp "$DESIGN_TEMPLATE" "$DESIGN_FILE"; else touch "$DESIGN_FILE"; fi
+
 # Set the SPECIFY_FEATURE environment variable for the current session
 export SPECIFY_FEATURE="$BRANCH_NAME"
 
 if $JSON_MODE; then
-    printf '{"BRANCH_NAME":"%s","SPEC_FILE":"%s","FEATURE_NUM":"%s"}\n' "$BRANCH_NAME" "$SPEC_FILE" "$FEATURE_NUM"
+    printf '{"BRANCH_NAME":"%s","SPEC_FILE":"%s","DESIGN_FILE":"%s","FEATURE_NUM":"%s"}\n' "$BRANCH_NAME" "$SPEC_FILE" "$DESIGN_FILE" "$FEATURE_NUM"
 else
     echo "BRANCH_NAME: $BRANCH_NAME"
     echo "SPEC_FILE: $SPEC_FILE"
+    echo "DESIGN_FILE: $DESIGN_FILE"
     echo "FEATURE_NUM: $FEATURE_NUM"
     echo "SPECIFY_FEATURE environment variable set to: $BRANCH_NAME"
 fi
