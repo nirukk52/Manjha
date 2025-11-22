@@ -17,10 +17,11 @@ import {
   ClassificationResult 
 } from "../contracts/api.types.js";
 import { CLASSIFICATION_CONFIG, TIMEOUTS } from "../common/config/constants.js";
+import { SecretKeys } from "../common/config/secrets.js";
 import { logClassification, logError } from "../common/logging/logger.js";
 
 // OpenAI API key from Encore secrets
-const openAIKey = secret("OpenAIApiKey");
+const openAIKey = secret(SecretKeys.OPENAI_API_KEY);
 
 /**
  * Classifies a user message to determine which agent should handle it.

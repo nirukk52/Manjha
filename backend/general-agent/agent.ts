@@ -7,10 +7,11 @@ import OpenAI from "openai";
 import { secret } from "encore.dev/config";
 import { GeneralQuery, GeneralResponse, AgentType } from "../contracts/api.types.js";
 import { AGENT_CONFIG, TIMEOUTS } from "../common/config/constants.js";
+import { SecretKeys } from "../common/config/secrets.js";
 import { logAgentCall, logError } from "../common/logging/logger.js";
 
 // OpenAI API key from Encore secrets
-const openAIKey = secret("OpenAIApiKey");
+const openAIKey = secret(SecretKeys.OPENAI_API_KEY);
 
 /**
  * Generates a concise response to a general (non-finance) query.
