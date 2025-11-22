@@ -12,11 +12,10 @@ import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { secret } from "encore.dev/config";
 import { FinanceQuery, FinanceResponse, AgentType } from "../contracts/api.types.js";
 import { AGENT_CONFIG, TIMEOUTS } from "../common/config/constants.js";
-import { SecretKeys } from "../common/config/secrets.js";
 import { logAgentCall, logError } from "../common/logging/logger.js";
 
 // OpenAI API key from Encore secrets
-const openAIKey = secret(SecretKeys.OPENAI_API_KEY);
+const openAIKey = secret("OpenAIApiKey2");
 
 /**
  * Creates a LangChain ChatOpenAI client with LangSmith tracing enabled.

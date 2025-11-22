@@ -1,17 +1,18 @@
 /**
- * Secret key constants for Encore secret management.
+ * Secret key documentation for Encore secret management.
  * 
- * Why this exists: Centralize secret key names to avoid hardcoding strings
- * and enable easy secret key rotation/updates across the codebase.
+ * NOTE: Encore's secret() function requires string literals at compile time,
+ * so these cannot be used as constants. This file serves as documentation.
+ * 
+ * Why this exists: Document all secret keys used in the application
+ * in a centralized location for easy reference.
+ * 
+ * Active Secrets:
+ * - "OpenAIApiKey2": OpenAI API Key for all AI agents
+ *   Used in: finance-agent, general-agent, message-classifier, agent-orchestrator
+ * 
+ * To rotate a secret:
+ * 1. Set new secret in Encore: encore secret set --env <env> <SecretName>
+ * 2. Find and replace the old secret name in all agent files
  */
-
-export const SecretKeys = {
-  /** OpenAI API Key for all AI agents */
-  OPENAI_API_KEY: 'OpenAIApiKey2',
-} as const;
-
-/**
- * Type-safe secret key type
- */
-export type SecretKey = typeof SecretKeys[keyof typeof SecretKeys];
 

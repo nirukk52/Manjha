@@ -9,11 +9,10 @@ import { api } from "encore.dev/api";
 import { secret } from "encore.dev/config";
 import { createGraph, runOrchestration } from "./graph.js";
 import { AgentType } from "../contracts/api.types.js";
-import { SecretKeys } from "../common/config/secrets.js";
 import { logError, logClassification, logAgentCall } from "../common/logging/logger.js";
 
 // Encore secret management
-const openAIKey = secret(SecretKeys.OPENAI_API_KEY);
+const openAIKey = secret("OpenAIApiKey2");
 
 /**
  * Request payload for orchestration.
