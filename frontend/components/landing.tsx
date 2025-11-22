@@ -164,12 +164,12 @@ export function Landing({ onEnter }: LandingProps) {
             </div>
             
             {/* About Link */}
-            <a 
-              href="#about" 
+            <Link 
+              href="/about" 
               className="text-lg text-[#18181b] hover:text-[#52525b] transition-colors px-4 py-2 rounded-lg hover:bg-white/50 border-2 border-black"
             >
               About
-            </a>
+            </Link>
           </div>
         </nav>
 

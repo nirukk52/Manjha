@@ -33,7 +33,7 @@ Consider adding these libraries for enhanced functionality:
 **Animation & Motion:**
 - `framer-motion` - Declarative animations for React (preferred for complex interactions)
 - `react-spring` - Spring-physics based animations (lightweight alternative)
-- Already installed: `tailwindcss-animate` for CSS-only animations
+- `tailwindcss-animate` (already installed) - CSS-only animations
 
 **Forms & Validation:**
 - `react-hook-form` - Performant, flexible forms with easy validation
@@ -67,7 +67,7 @@ Before coding, understand the context and commit to a BOLD aesthetic direction:
 **CRITICAL**: Choose a clear conceptual direction and execute it with precision. Bold maximalism and refined minimalism both work - the key is intentionality, not intensity.
 
 Then implement working code (HTML/CSS/JS, React, Vue, etc.) that is:
-- Production-grade and functional
+- **Production-grade and functional**: Verify imports exist!
 - Visually striking and memorable
 - Cohesive with a clear aesthetic point-of-view
 - Meticulously refined in every detail
@@ -100,6 +100,10 @@ Focus on:
 - Implement the `cn()` utility for conditional class merging
 - Keep components in `/components/ui` for base components
 - Create feature-specific components in `/components` or colocated with routes
+
+**Dependency Management:**
+- **Verify Imports**: Before using generic icons or libraries, verify they are installed and exported in the specific version in `node_modules`.
+- **Lucide React**: Older versions (e.g., 0.105.x) may miss common icons (like `Brain`). Use `grep` to check available icons in `node_modules/lucide-react/dist/esm/icons`.
 
 NEVER use generic AI-generated aesthetics like overused font families (Inter, Roboto, Arial, system fonts), cliched color schemes (particularly purple gradients on white backgrounds), predictable layouts and component patterns, and cookie-cutter design that lacks context-specific character.
 
