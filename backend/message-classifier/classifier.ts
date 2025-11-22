@@ -159,7 +159,7 @@ Your job is to determine if a user message is:
 Respond in JSON format: {"type": "FINANCE" | "GENERAL", "confidence": 0.0-1.0, "reasoning": "brief explanation"}`;
 
   const response = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+    model: "gpt-3.5-turbo",
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: `Classify this message: "${content}"` },
