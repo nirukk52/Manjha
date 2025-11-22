@@ -1,5 +1,5 @@
 {
-	"id": "manjha-9y82",
+	"id": "manjha-chat-wh42",
 	"lang": "typescript",
 	"global_cors": {
 		"allow_origins_without_credentials": [
