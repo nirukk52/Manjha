@@ -42,9 +42,9 @@ export const RATE_LIMITS = {
  */
 export const AGENT_CONFIG = {
   /** Finance agent model (OpenAI) */
-  FINANCE_MODEL: 'gpt-4-turbo-preview',
+  FINANCE_MODEL: 'gpt-4o-mini',
   /** General agent model (cheaper/faster) */
-  GENERAL_MODEL: 'gpt-3.5-turbo',
+  GENERAL_MODEL: 'gpt-4o-mini',
   /** Maximum tokens for general agent responses */
   GENERAL_MAX_TOKENS: 100,
   /** Maximum tokens for finance agent responses */

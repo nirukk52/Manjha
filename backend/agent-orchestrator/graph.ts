@@ -56,7 +56,7 @@ export type OrchestrationState = typeof StateAnnotation.State;
 function createClassifyNode(config: GraphConfig) {
   return async (state: OrchestrationState): Promise<OrchestrationState> => {
     const llm = new ChatOpenAI({
-      modelName: "gpt-3.5-turbo",
+      modelName: "gpt-4o-mini",
       openAIApiKey: config.openAIKey,
       temperature: 0.3,
     });
