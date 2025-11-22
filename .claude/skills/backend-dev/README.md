@@ -139,6 +139,16 @@ encore test                 # ONLY correct command (initializes Encore runtime)
 
 **NEVER use `npm test` directly** - it will fail because Encore runtime environment won't be initialized.
 
+## Frontend ↔ Backend Integration
+- The Next.js frontend talks to Encore through `frontend/lib/api-client.ts`, which enforces `NEXT_PUBLIC_API_URL` and `NEXT_PUBLIC_API_TIMEOUT` before calling `/chat/send` and the SSE stream endpoints.
+- Streaming replies are consumed via `getStreamingUrl(...)`, so monitoring or debugging connection issues usually begins in this shared client layer.
+
+## Encore MCP Deployment Quickstart
+- Install the Encore CLI (`brew install encoredev/tap/encore` on macOS or the steps from https://encore.dev/docs/get-started) and confirm `encore` works locally.
+- Start Encore’s MCP server (`encore mcp start`) when you need the backend runtime exposed to Model Context Protocol tools or debugging instrumentation.
+- Push to Encore Cloud with `git push encore main`; the managed platform provisions Postgres, secrets, logs, and the GPT-powered agents automatically and offers a free tier for rapid prototyping.
+- Use `encore secret set --env=prod OpenAIApiKey` plus `encore env create` if you need separate environments (staging/production) while keeping the free tier happy by staying within its quotas.
+
 ### Creating a New Service
 ```bash
 cd backend

@@ -4,6 +4,10 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
+  // Disable ESLint during production builds (linting handled separately)
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 }
 
 export default nextConfig

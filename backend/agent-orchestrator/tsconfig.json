@@ -1,0 +1,22 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "~encore/*": ["../encore.gen/*"]
+    }
+  },
+  "include": [
+    "*.ts",
+    "../contracts/**/*.ts",
+    "../common/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "__langgraph__*.ts"
+  ]
+}
+

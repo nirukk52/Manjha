@@ -154,11 +154,11 @@
 
 ### Frontend Integration (Pending)
 
-- [ ] T047 [P] [US3] Update frontend chat-input.tsx: connect to SSE `/chat/stream/:sessionId`
-- [ ] T048 [US3] Implement EventSource listener for streaming chunks in chat-input.tsx
-- [ ] T049 [US3] Add word-by-word append logic (not batch) for DELTA chunks
-- [ ] T050 [US3] Add typing indicator when status = STREAMING
-- [ ] T051 [US3] Add smooth CSS transitions for message appearance (< 300ms)
+- [X] T047 [P] [US3] Update frontend chat-input.tsx: connect to SSE `/chat/stream/:sessionId`
+- [X] T048 [US3] Implement EventSource listener for streaming chunks in chat-input.tsx
+- [X] T049 [US3] Add word-by-word append logic (not batch) for DELTA chunks
+- [X] T050 [US3] Add typing indicator when status = STREAMING
+- [X] T051 [US3] Add smooth CSS transitions for message appearance (< 300ms)
 - [ ] T052 [US3] Implement rate limit governor in `backend/chat-gateway/rate-limiter.ts` (200 orders/min Kite API limit)
 - [ ] T054 [US3] Test rapid message sending (10 messages) - verify UI stays responsive
 - [ ] T055 [US3] Test network disconnection - verify graceful error handling

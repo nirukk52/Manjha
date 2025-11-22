@@ -1,0 +1,8 @@
+
+# LangGraph API
+.langgraph_api
+
+# Environment variables with API keys
+.env
+.env.*
+!.env.example
