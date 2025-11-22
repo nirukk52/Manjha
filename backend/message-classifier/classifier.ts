@@ -149,7 +149,7 @@ async function classifyByLLM(content: string): Promise<{
   confidence: number;
   reasoning: string;
 }> {
-  const openai = new OpenAI({ apiKey: openAIKey() });
+  const openai = new OpenAI({ apiKey: openAIKey() || process.env.OPENAI_API_KEY });
   
   const systemPrompt = `You are a message classifier for a financial chat application. 
 Your job is to determine if a user message is:

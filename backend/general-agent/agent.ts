@@ -26,7 +26,7 @@ export const respond = api(
     const startTime = performance.now();
     
     try {
-      const openai = new OpenAI({ apiKey: openAIKey() });
+      const openai = new OpenAI({ apiKey: openAIKey() || process.env.OPENAI_API_KEY });
       
       const systemPrompt = `You are a helpful assistant for a financial application. 
 You provide brief, friendly responses to general questions, greetings, and help requests.

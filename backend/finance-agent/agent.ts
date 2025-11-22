@@ -169,9 +169,9 @@ risk management, and financial markets. Provide detailed, accurate financial ana
     }
     
     // Fallback: Native OpenAI streaming (always works)
-    const apiKey = openAIKey();
+    const apiKey = openAIKey() || process.env.OPENAI_API_KEY;
     if (!apiKey) {
-      throw new Error("OpenAI API key is not set. Set it with: encore secret set --type local OpenAIApiKey");
+      throw new Error("OpenAI API key is not set. Set it with: encore secret set --type local OpenAIApiKey or OPENAI_API_KEY env var");
     }
     
     const openai = new OpenAI({ apiKey });
