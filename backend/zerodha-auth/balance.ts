@@ -99,15 +99,15 @@ export async function fetchBalance(userId: string, force: boolean = false): Prom
 
     // Extract equity margins (default segment)
     const equityMargin = margins.equity;
-    if (!equityMargin) {
-      log.error("No equity margin data in response", { margins });
-      throw new Error("No equity margin data available");
+    if (!equityMargin || !equityMargin.available || !equityMargin.utilised) {
+      log.error("Invalid margin data in response", { margins });
+      throw new Error("Invalid margin data available");
     }
 
     const balance: ZerodhaBalance = {
-      available: equityMargin.available.cash,
-      usedMargin: equityMargin.utilised.debits,
-      total: equityMargin.net,
+      available: equityMargin.available?.cash ?? 0,
+      usedMargin: equityMargin.utilised?.debits ?? 0,
+      total: equityMargin.net ?? 0,
       currency: "INR",
       lastUpdated: new Date(),
     };
