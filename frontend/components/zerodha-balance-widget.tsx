@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react';
 import { RefreshCw } from 'lucide-react';
 
 interface BalanceData {
-  availableBalance: number;
+  available: number;
   usedMargin: number;
-  totalBalance: number;
+  total: number;
   currency: string;
 }
 
@@ -114,7 +114,7 @@ export function ZerodhaBalanceWidget({ userId }: ZerodhaBalanceWidgetProps) {
             Total Balance
           </span>
           <span className="text-3xl font-black text-[#2d2d2d]">
-            {formatCurrency(balance.totalBalance)}
+            {formatCurrency(balance.total)}
           </span>
         </div>
         
@@ -124,7 +124,7 @@ export function ZerodhaBalanceWidget({ userId }: ZerodhaBalanceWidgetProps) {
               Available
             </span>
             <span className="text-xl font-black text-[#16a34a]">
-              {formatCurrency(balance.availableBalance)}
+              {formatCurrency(balance.available)}
             </span>
           </div>
           <div>

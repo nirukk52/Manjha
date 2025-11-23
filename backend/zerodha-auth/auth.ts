@@ -95,11 +95,15 @@ export const getConnectionStatus = api(
       return { status: ConnectionStatus.EXPIRED, isConnected: false };
     }
 
+    // Fetch balance if connected
+    const balance = await fetchBalance(req.userId, false);
+
     return {
       status: connection.status,
       isConnected: true,
       zerodhaUserId: connection.zerodha_user_id,
       expiresAt: connection.expires_at,
+      balance: balance || undefined,
     };
   }
 );
