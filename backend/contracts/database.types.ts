@@ -118,5 +118,75 @@ export interface AgentMetricsRow {
   user_id: string;
 }
 
+// ============================================================================
+// ZERODHA DATABASE TYPES
+// ============================================================================
 
+import { ConnectionStatus } from './api.types.js';
+
+/**
+ * Zerodha connection record in database.
+ * 
+ * Why this exists: Persists user's Zerodha authentication
+ */
+export interface ZerodhaConnectionRow {
+  /** Primary key */
+  id: string;
+  /** Foreign key to users table */
+  user_id: string;
+  /** Zerodha user ID from profile */
+  zerodha_user_id: string;
+  /** Encrypted access token */
+  access_token: string;
+  /** Token creation timestamp */
+  created_at: Date;
+  /** Token expiration timestamp */
+  expires_at: Date;
+  /** Connection status */
+  status: string;
+  /** Last successful balance fetch */
+  last_balance_fetch: Date | null;
+  /** Error details if any */
+  error_details: string | null;
+}
+
+/**
+ * Balance history record in database.
+ * 
+ * Why this exists: Tracks balance over time for analytics
+ */
+export interface ZerodhaBalanceHistoryRow {
+  /** Primary key */
+  id: string;
+  /** Foreign key to zerodha_connections */
+  connection_id: string;
+  /** Available cash balance */
+  available_balance: number;
+  /** Used margin */
+  used_margin: number;
+  /** Total account value */
+  total_balance: number;
+  /** Currency code */
+  currency: string;
+  /** When balance was fetched */
+  timestamp: Date;
+  /** API call latency */
+  fetch_latency_ms: number;
+}
+
+/**
+ * OAuth state record in database.
+ * 
+ * Why this exists: Temporary CSRF protection for OAuth
+ */
+export interface ZerodhaOAuthStateRow {
+  /** OAuth state parameter (primary key) */
+  state: string;
+  /** User initiating OAuth */
+  user_id: string;
+  /** State creation time */
+  created_at: Date;
+  /** Whether state has been used */
+  used: boolean;
+}
 
