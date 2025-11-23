@@ -31,6 +31,11 @@
  *   Used in: zerodha-auth
  *   Must be 64-character hex string (32 bytes)
  * 
+ * - "SessionSigningKey": HMAC-SHA256 key for OAuth session parameter signing
+ *   Used in: zerodha-auth
+ *   Must be at least 32 bytes (64 hex characters) for security
+ *   Generate with: openssl rand -hex 32
+ * 
  * To rotate a secret:
  * 1. Set new secret in Encore: encore secret set --env <env> <SecretName>
  * 2. Find and replace the old secret name in all agent files

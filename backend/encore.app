@@ -4,6 +4,7 @@
 	"global_cors": {
 		"allow_origins_without_credentials": [
 			"http://localhost:3000",
+			"http://localhost:3001",
 			"http://127.0.0.1:3001",
 			"https://manjha.app",
 			"https://manjha-*.vercel.app",

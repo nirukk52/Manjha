@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Badge } from './ui/badge';
 import { TrendingUp, TrendingDown, Pin, ChevronLeft, ChevronRight, Activity, Wallet, BookOpen, BarChart3, ChevronDown, Eye } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
@@ -8,6 +8,29 @@ import { MarketSentimentWidget } from './market-sentiment-widget';
 import { NewsFeedWidget } from './news-feed-widget';
 import { TwitterRecommendations } from './twitter-recommendations';
 import { WatchingSection } from './watching-section';
+import { ZerodhaConnectionWidget } from './zerodha-connection-widget';
+
+/**
+ * Gets or creates a persistent device ID for tracking user sessions
+ */
+function getDeviceId(): string {
+  const STORAGE_KEY = 'manjha_device_id';
+  
+  if (typeof window === 'undefined') return 'server';
+  
+  let deviceId = localStorage.getItem(STORAGE_KEY);
+  
+  if (!deviceId) {
+    // Generate unique ID: timestamp + random + browser fingerprint
+    const timestamp = Date.now().toString(36);
+    const random = Math.random().toString(36).substring(2, 15);
+    const browserFingerprint = navigator.userAgent.length.toString(36);
+    deviceId = `device_${timestamp}${random}${browserFingerprint}`;
+    localStorage.setItem(STORAGE_KEY, deviceId);
+  }
+  
+  return deviceId;
+}
 
 /**
  * Widget Dashboard Component
@@ -22,6 +45,11 @@ export function WidgetDashboard({ onDateClick }: WidgetDashboardProps) {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [mobileActiveSection, setMobileActiveSection] = useState<'portfolio' | 'journal' | 'insights' | 'watching'>('portfolio');
+  const [userId, setUserId] = useState<string>('');
+
+  useEffect(() => {
+    setUserId(getDeviceId());
+  }, []);
 
   // Pie chart data - Portfolio allocation
   const portfolioData = [
@@ -147,7 +175,7 @@ export function WidgetDashboard({ onDateClick }: WidgetDashboardProps) {
         </div>
         <button className="relative px-5 py-2.5 text-sm rounded-xl bg-gradient-to-br from-[#387ED1]/20 to-[#2563eb]/20 hover:from-[#387ED1]/30 hover:to-[#2563eb]/30 backdrop-blur-sm border-2 border-[#387ED1]/40 hover:border-[#387ED1]/60 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group">
           <span className="relative text-[#2d2d2d] font-black uppercase tracking-tight">
-            Connect Your Zerodha
+            Connect Your Account
           </span>
         </button>
       </div>
@@ -220,6 +248,9 @@ export function WidgetDashboard({ onDateClick }: WidgetDashboardProps) {
       <div className="grid grid-cols-12 gap-6">
         {/* LEFT COLUMN - Portfolio State */}
         <div className={`col-span-12 lg:col-span-3 space-y-6 ${mobileActiveSection !== 'portfolio' ? 'hidden lg:block' : ''}`}>
+          {/* Zerodha Connection Widget */}
+          {userId && <ZerodhaConnectionWidget userId={userId} />}
+
           {/* Portfolio Summary Stats */}
           <div className="relative bg-[#c4e1d4] rounded-2xl p-5 border-2 border-black shadow-[6px_6px_0px_0px_#000000]">
             <h3 className="uppercase tracking-wide font-black text-[#2d2d2d] mb-4">Portfolio Value</h3>

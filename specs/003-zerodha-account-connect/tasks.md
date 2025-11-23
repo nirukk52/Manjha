@@ -83,14 +83,15 @@
 
 #### Frontend Integration
 
-- [ ] T026 [P] [US1] Update `frontend/lib/api-client.ts` with Zerodha OAuth endpoints
-- [ ] T027 [P] [US1] Create Zerodha types in `frontend/types/zerodha.ts` (import from backend contracts)
-- [ ] T028 [US1] Update "Connect Your Account" button in `frontend/components/widget-dashboard.tsx` (line 150)
-- [ ] T029 [US1] Create connection status component in `frontend/components/zerodha-status.tsx`
-- [ ] T030 [US1] Add loading states for OAuth flow in `frontend/components/zerodha-status.tsx`
-- [ ] T031 [US1] Add error handling UI for failed connections in `frontend/components/zerodha-status.tsx`
+- [X] T026 [P] [US1] Update `frontend/lib/api-client.ts` with Zerodha OAuth endpoints
+- [X] T027 [P] [US1] Create Zerodha types in `frontend/types/zerodha.ts` (import from backend contracts)
+- [X] T028 [US1] Update "Connect Your Account" button in `frontend/components/widget-dashboard.tsx` (line 150)
+- [X] T029 [US1] Create connection status component in `frontend/components/zerodha-connection-widget.tsx`
+- [X] T030 [US1] Add loading states for OAuth flow in `frontend/components/zerodha-connection-widget.tsx`
+- [X] T031 [US1] Add error handling UI for failed connections in `frontend/components/zerodha-connection-widget.tsx`
 
 **Checkpoint**: Run E2E tests → All should PASS (Green phase) ✅
+**STATUS**: ✅ WORKING IN PRODUCTION - User connected Account ID: EH6383
 
 ### Refactor Phase for User Story 1
 
