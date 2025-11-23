@@ -251,26 +251,8 @@ export function WidgetDashboard({ onDateClick }: WidgetDashboardProps) {
           {/* Zerodha Connection Widget */}
           {userId && <ZerodhaConnectionWidget userId={userId} />}
 
-          {/* Portfolio Summary Stats */}
-          <div className="relative bg-[#c4e1d4] rounded-2xl p-5 border-2 border-black shadow-[6px_6px_0px_0px_#000000]">
-            <h3 className="uppercase tracking-wide font-black text-[#2d2d2d] mb-4">Portfolio Value</h3>
-            <div className="space-y-4">
-              <div>
-                <span className="text-xs uppercase tracking-wider font-black text-[#2d2d2d]/60 block mb-1">Total Value</span>
-                <span className="text-3xl font-black text-[#2d2d2d]">$127,450</span>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <span className="text-xs uppercase tracking-wider font-black text-[#2d2d2d]/60 block mb-1">Today</span>
-                  <span className="text-xl font-black text-[#16a34a]">+$2,340</span>
-                </div>
-                <div>
-                  <span className="text-xs uppercase tracking-wider font-black text-[#2d2d2d]/60 block mb-1">MTD</span>
-                  <span className="text-xl font-black text-[#16a34a]">+$8,920</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Portfolio Summary Stats - Now with Zerodha Balance */}
+          <ZerodhaBalanceWidget userId={userId} />
 
           {/* Portfolio Allocation Pie Chart Widget */}
           <div className="relative group bg-[#b4d4e1] rounded-2xl p-5 border-2 border-black shadow-[6px_6px_0px_0px_#000000]">
