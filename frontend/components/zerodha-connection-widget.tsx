@@ -12,9 +12,9 @@ interface ConnectionStatus {
   isConnected: boolean;
   zerodhaUserId?: string;
   balance?: {
-    availableBalance: number;
+    available: number;
     usedMargin: number;
-    totalBalance: number;
+    total: number;
     currency: string;
   };
   minutesUntilExpiry?: number;
@@ -208,7 +208,7 @@ export function ZerodhaConnectionWidget({ userId }: ZerodhaConnectionWidgetProps
                   Available
                 </span>
                 <span className="text-lg font-black text-[#16a34a]">
-                  ₹{status.balance.availableBalance.toLocaleString('en-IN')}
+                  ₹{(status.balance.available ?? 0).toLocaleString('en-IN')}
                 </span>
               </div>
               <div className="flex justify-between items-center">
@@ -216,7 +216,7 @@ export function ZerodhaConnectionWidget({ userId }: ZerodhaConnectionWidgetProps
                   Used Margin
                 </span>
                 <span className="text-sm font-black text-[#2d2d2d]">
-                  ₹{status.balance.usedMargin.toLocaleString('en-IN')}
+                  ₹{(status.balance.usedMargin ?? 0).toLocaleString('en-IN')}
                 </span>
               </div>
             </div>
