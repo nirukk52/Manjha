@@ -9,6 +9,7 @@ import { NewsFeedWidget } from './news-feed-widget';
 import { TwitterRecommendations } from './twitter-recommendations';
 import { WatchingSection } from './watching-section';
 import { ZerodhaConnectionWidget } from './zerodha-connection-widget';
+import { ZerodhaBalanceWidget } from './zerodha-balance-widget';
 
 /**
  * Gets or creates a persistent device ID for tracking user sessions
