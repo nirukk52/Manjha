@@ -105,7 +105,7 @@ export async function fetchBalance(userId: string, force: boolean = false): Prom
     }
 
     const balance: ZerodhaBalance = {
-      available: equityMargin.available?.cash ?? 0,
+      available: equityMargin.available?.live_balance ?? equityMargin.available?.cash ?? 0,
       usedMargin: equityMargin.utilised?.debits ?? 0,
       total: equityMargin.net ?? 0,
       currency: "INR",
