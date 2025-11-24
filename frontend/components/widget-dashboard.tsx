@@ -13,6 +13,7 @@ import { ZerodhaBalanceWidget } from './zerodha-balance-widget';
 
 /**
  * Gets or creates a persistent device ID for tracking user sessions
+ * Uses cryptographically secure random UUID to prevent collisions
  */
 function getDeviceId(): string {
   const STORAGE_KEY = 'manjha_device_id';
@@ -22,11 +23,8 @@ function getDeviceId(): string {
   let deviceId = localStorage.getItem(STORAGE_KEY);
   
   if (!deviceId) {
-    // Generate unique ID: timestamp + random + browser fingerprint
-    const timestamp = Date.now().toString(36);
-    const random = Math.random().toString(36).substring(2, 15);
-    const browserFingerprint = navigator.userAgent.length.toString(36);
-    deviceId = `device_${timestamp}${random}${browserFingerprint}`;
+    // Generate cryptographically secure unique ID
+    deviceId = crypto.randomUUID();
     localStorage.setItem(STORAGE_KEY, deviceId);
   }
   

@@ -173,6 +173,7 @@ export const refreshBalance = api(
     log.info("Manual balance refresh requested", { userId: req.userId, force: req.force });
 
     try {
+      const beforeFetchTime = Date.now();
       const balance = await fetchBalance(req.userId, req.force ?? false);
 
       if (!balance) {
@@ -183,9 +184,10 @@ export const refreshBalance = api(
         };
       }
 
-      // Check if this was from cache
-      const cacheAge = Date.now() - balance.lastUpdated.getTime();
-      const fromCache = !req.force && cacheAge < BALANCE_CACHE_TTL_MS;
+      // Check if data was from cache by comparing lastUpdated with fetch time
+      // If balance.lastUpdated is older than the fetch call, it was from cache
+      const cacheAge = beforeFetchTime - balance.lastUpdated.getTime();
+      const fromCache = cacheAge > 1000; // More than 1 second old = from cache
 
       return {
         success: true,
