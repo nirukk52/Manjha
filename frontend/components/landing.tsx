@@ -1,13 +1,13 @@
 'use client';
 
-import { ArrowRight, BarChart3, Zap, BookOpen } from 'lucide-react';
+import { ArrowRight, BarChart3, Lightbulb, BookOpen } from 'lucide-react';
 import { Button } from './ui/button';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
 /**
  * Landing Page Component
- * Welcome page for Manjha trading journal with animated kites and hero section
+ * Welcome page for Manjha trading journal with animated kites, hero section, and navigation
  */
 
 interface LandingProps {
@@ -157,19 +157,39 @@ export function Landing({ onEnter }: LandingProps) {
 
         {/* Top Navigation Bar */}
         <nav className="max-w-5xl mx-auto px-6 py-6">
-          <div className="flex items-end justify-between">
+          <div className="flex items-center justify-between">
             {/* Logo */}
-            <div className="w-10 h-10 bg-[#18181b] border-2 border-black rounded-lg flex items-center justify-center font-black text-white text-xl">
+            <div className="w-10 h-10 bg-[#18181b] border-3 border-black rounded-lg flex items-center justify-center font-black text-white text-xl">
               M
             </div>
             
-            {/* About Link */}
-            <Link 
-              href="/about" 
-              className="text-lg text-[#18181b] hover:text-[#52525b] transition-colors px-4 py-2 rounded-lg hover:bg-white/50 border-2 border-black"
-            >
-              About
-            </Link>
+            {/* Navigation Links */}
+            <div className="flex items-center gap-4">
+              <Link 
+                href="/" 
+                className="text-lg text-white bg-[#18181b] px-4 py-2 rounded-lg border-2 border-black"
+              >
+                Home
+              </Link>
+              <Link 
+                href="/dashboard" 
+                className="text-lg text-[#18181b] hover:text-[#52525b] transition-colors px-4 py-2 rounded-lg hover:bg-white/50 border-2 border-transparent hover:border-black"
+              >
+                Dashboard
+              </Link>
+              <Link 
+                href="/chat" 
+                className="text-lg text-[#18181b] hover:text-[#52525b] transition-colors px-4 py-2 rounded-lg hover:bg-white/50 border-2 border-transparent hover:border-black"
+              >
+                Chat
+              </Link>
+              <Link 
+                href="/about" 
+                className="text-lg text-[#18181b] hover:text-[#52525b] transition-colors px-4 py-2 rounded-lg hover:bg-white/50 border-2 border-transparent hover:border-black"
+              >
+                About
+              </Link>
+            </div>
           </div>
         </nav>
 
@@ -178,8 +198,8 @@ export function Landing({ onEnter }: LandingProps) {
           <div className="space-y-8">
             {/* Logo/Name */}
             <div className="space-y-2">
-              <h1 className="text-7xl font-black tracking-tight">Manjha</h1>
-              <p className="text-xl text-[#52525b] font-medium">Personal financial assistant and portfolio manager.</p>
+              <h1 className="text-7xl tracking-tight">Manjha</h1>
+              <p className="text-xl text-[#52525b]">Trade journal for dummies</p>
             </div>
 
             {/* Main Headline */}
@@ -242,9 +262,9 @@ export function Landing({ onEnter }: LandingProps) {
             {/* Mental Model */}
             <div className="bg-[#d9b89c] border-4 border-black shadow-[6px_6px_0px_0px_#000000] rounded-2xl p-8 hover:shadow-[3px_3px_0px_0px_#000000] hover:translate-x-[3px] hover:translate-y-[3px] transition-all">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-[#18181b] border-4 border-black rounded-xl mb-4">
-                <Zap className="size-8 text-white" />
+                <Lightbulb className="size-8 text-white" />
               </div>
-              <h3 className="text-2xl font-black mb-3">Mental Model</h3>
+              <h3 className="text-2xl mb-3">Mental Model</h3>
               <p className="text-[#2d2d2d]">
                 Manjha analyzes patterns, learns your style, and builds a living mental model of your trading behavior.
               </p>
@@ -255,7 +275,7 @@ export function Landing({ onEnter }: LandingProps) {
               <div className="inline-flex items-center justify-center w-16 h-16 bg-[#18181b] border-4 border-black rounded-xl mb-4">
                 <BarChart3 className="size-8 text-white" />
               </div>
-              <h3 className="text-2xl font-black mb-3">Discipline Engine</h3>
+              <h3 className="text-2xl mb-3">Discipline Engine</h3>
               <p className="text-[#2d2d2d]">
                 Get personalized rules, decision flows, and risk guardrails that adapt to your portfolio's reality.
               </p>
@@ -266,7 +286,7 @@ export function Landing({ onEnter }: LandingProps) {
               <div className="inline-flex items-center justify-center w-16 h-16 bg-[#18181b] border-4 border-black rounded-xl mb-4">
                 <BookOpen className="size-8 text-white" />
               </div>
-              <h3 className="text-2xl font-black mb-3">Portfolio Journal</h3>
+              <h3 className="text-2xl mb-3">Portfolio Journal</h3>
               <p className="text-[#2d2d2d]">
                 Every trade, every decision, every lesson—logged, searchable, and ready to surface insights when you need them.
               </p>
@@ -277,7 +297,7 @@ export function Landing({ onEnter }: LandingProps) {
         {/* Bottom CTA */}
         <div className="max-w-5xl mx-auto px-6 py-16 text-center">
           <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_#000000] rounded-2xl p-12">
-            <h3 className="text-4xl font-black mb-4">
+            <h3 className="text-4xl mb-4">
               Not just P&L, a memory for your money.
             </h3>
             <p className="text-xl text-[#5a5a5a] mb-8 max-w-2xl mx-auto">

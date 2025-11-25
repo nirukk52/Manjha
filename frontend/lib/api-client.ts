@@ -9,6 +9,8 @@
 type AgentType = 'FINANCE' | 'GENERAL';
 type MessageStatus = 'PENDING' | 'STREAMING' | 'COMPLETE' | 'ERROR';
 
+import { Connector } from './types';
+
 /**
  * Request payload for sending a chat message
  */
@@ -16,6 +18,7 @@ export interface ChatMessageRequest {
   sessionId: string;
   content: string;
   userId?: string;
+  selectedConnectors?: Connector[];
 }
 
 /**
