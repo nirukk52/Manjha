@@ -42,10 +42,7 @@ This will:
 - Run migrations (001_create_chat_sessions, 002_create_chat_messages, 003_create_agent_metrics)
 - Deploy all services:
   - chat-gateway (SSE streaming)
-  - message-classifier (routing)
-  - finance-agent (GPT-4)
-  - general-agent (GPT-3.5)
-  - agent-orchestrator (LangGraph)
+  - agents (LangGraph-based)
 
 **Expected deployment time**: 2-5 minutes
 

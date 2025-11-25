@@ -9,7 +9,7 @@
  * 
  * Active Secrets:
  * - "OpenAIApiKey2": OpenAI API Key for all AI agents
- *   Used in: finance-agent, general-agent, message-classifier, agent-orchestrator
+ *   Used in: finance-agent, general-agent, message-classifier
  * 
  * To rotate a secret:
  * 1. Set new secret in Encore: encore secret set --env <env> <SecretName>

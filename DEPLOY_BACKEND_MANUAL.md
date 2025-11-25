@@ -168,12 +168,9 @@ Should see:
 ### 2. Check Services Are Running
 In dashboard → Services
 
-Should see all 5 services:
+Should see all services:
 - ✅ chat-gateway
-- ✅ message-classifier
-- ✅ finance-agent
-- ✅ general-agent
-- ✅ agent-orchestrator (if LangGraph is deployed)
+- ✅ agents (LangGraph-based)
 
 ### 3. Test SSE Streaming
 ```bash

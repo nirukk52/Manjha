@@ -1,17 +1,19 @@
 # Manjha Finance Chat Agent - Backend
 
-TypeScript backend for the finance chat agent powered by Encore.ts, OpenAI GPT-4, and LangGraph.
+TypeScript backend for the finance chat agent powered by **Encore.ts** and **LangGraph**.
 
 ## Architecture
+
+**All agents are built using LangGraph** - providing state management, tool calling, and multi-step reasoning capabilities.
 
 ### Services
 
 ```
 chat-gateway/          → Entry point for chat messages + SSE streaming
-message-classifier/    → Routes messages to finance vs general agent  
-finance-agent/         → Specialized financial analysis (GPT-4)
-general-agent/         → Quick responses for non-finance queries (GPT-3.5)
-agent-orchestrator/    → LangGraph multi-agent workflow coordination
+agents/                → LangGraph-based agent system
+  ├── graphs/          → Agent state graphs (finance, general, research)
+  ├── nodes/           → Reusable graph nodes (classify, execute, stream)
+  └── tools/           → Agent tools (Kite API, portfolio, etc.)
 ```
 
 ### Flow
@@ -21,12 +23,20 @@ User Message
     ↓
 [Chat Gateway] → Validates, stores message
     ↓
-[Classifier] → Finance or General? (< 500ms)
+[LangGraph Router] → Classify & route to appropriate agent graph
     ↓
-[Agent] → Generate response (Finance: < 3s, General: < 2s)
+[Agent Graph] → Multi-step reasoning with tools
     ↓
 [SSE Stream] → Real-time chunks to frontend
 ```
+
+### Why LangGraph?
+
+- **State Management**: Persistent conversation state across turns
+- **Tool Calling**: Structured integration with Kite API, portfolio data
+- **Multi-step Reasoning**: Complex queries broken into sub-tasks
+- **Observability**: Full tracing via LangSmith
+- **Streaming**: Native support for SSE token streaming
 
 ## Setup
 
@@ -241,21 +251,6 @@ encore env create staging
 encore secret set --env staging OpenAIApiKey
 ```
 
-## LangGraph Orchestration
-
-The `agent-orchestrator` service uses LangGraph for multi-agent workflows:
-
-1. **CLASSIFY** - Determine routing
-2. **EXECUTE** - Run finance or general agent
-3. **STREAM** - Deliver response to client
-4. **COMPLETE** - Log metrics
-
-Currently simplified for MVP. Future enhancements:
-- Multi-step planning (planner → searcher → writer)
-- Verification agent
-- Source attribution
-- Confidence scoring
-
 ## MVP Limitations
 
 1. **No Portfolio Integration**: Finance agent provides general analysis
@@ -263,11 +258,35 @@ Currently simplified for MVP. Future enhancements:
 3. **Basic Classification**: Keyword heuristics + LLM fallback
 4. **No Rate Limiting**: Enforcement deferred to post-MVP
 
+## LangGraph Development
+
+### Local Development with LangGraph Studio
+
+```bash
+# Set environment variables
+export LANGSMITH_API_KEY="your-key"
+export LANGSMITH_TRACING="true"
+export OPENAI_API_KEY="your-key"
+
+# Run with tracing
+encore run
+```
+
+View traces at: https://smith.langchain.com/
+
+### Adding New Agent Graphs
+
+1. Define state schema in `agents/graphs/`
+2. Create nodes in `agents/nodes/`
+3. Wire up graph with conditional edges
+4. Register in chat-gateway router
+
 ## Future Enhancements
 
-- [ ] Portfolio data integration via Kite API
-- [ ] Advanced LangGraph workflows (planning, verification)
-- [ ] Redis caching for classification
+- [ ] Portfolio data integration via Kite API tools
+- [ ] Research agent with web search capabilities
+- [ ] Multi-agent supervisor for complex queries
+- [ ] Redis checkpointing for conversation state
 - [ ] WebSocket support for bidirectional communication
 - [ ] Rate limiting per user
 - [ ] User authentication integration

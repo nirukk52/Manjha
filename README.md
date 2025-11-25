@@ -218,11 +218,4 @@ cd frontend
 npm test
 ```
 
-### Development with LangGraph Studio
-
-```bash
-cd backend/agent-orchestrator
-./start-langgraph.sh  # Opens LangGraph Studio for visual debugging
-```
-
 See [Architecture Documentation](./specs/002-multi-agent-architecture/README.md) for detailed system design.
