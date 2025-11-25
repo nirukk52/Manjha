@@ -1,9 +1,0 @@
-{
-  "node_version": "20",
-  "dependencies": ["."],
-  "graphs": {
-    "agent": "./graph.ts:graph"
-  },
-  "env": ".env"
-}
-

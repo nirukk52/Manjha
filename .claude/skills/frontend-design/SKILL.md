@@ -118,4 +118,23 @@ Interpret creatively and make unexpected choices that feel genuinely designed fo
 - Implement proper semantic HTML
 - Ensure WCAG 2.1 AA compliance minimum
 
+**Figma Make Integration Patterns:**
+- When integrating Figma Make designs, use `mcp_Figma_get_design_context` to fetch complete component code
+- Figma Make files return React + Tailwind code that can be directly adapted
+- Extract design tokens (colors, spacing, typography) from the Figma code
+- Maintain pixel-perfect fidelity: exact border widths, shadow offsets, rounded corners
+- Use `AnimatePresence` from framer-motion for expandable/collapsible sections
+- Implement connector/button grids with staggered animations (delay: 0.05 * index)
+
+**Manjha Brutalist Design System:**
+- Background: `#d4d4d8` (neutral gray)
+- Primary Black: `#18181b`
+- Accent Colors: `#d9b89c` (brown), `#e5c9c9` (pink), `#d4c4e1` (purple)
+- Borders: `border-2` to `border-4` with `border-black`
+- Shadows: `shadow-[Npx_Npx_0px_0px_#000000]` pattern (3px to 8px offsets)
+- Hover states: Translate `translate-x-[2px] translate-y-[2px]` with reduced shadow
+- Grid pattern: 40x40 SVG pattern at 15% opacity for background texture
+- Navigation: Active state uses `bg-[#18181b] text-white`, inactive uses transparent hover states
+- Rounded corners: `rounded-lg` (8px) to `rounded-2xl` (16px) for cards, `rounded-[32px]` for chat boxes
+
 Remember: Claude is capable of extraordinary creative work. Don't hold back, show what can truly be created when thinking outside the box and committing fully to a distinctive vision.

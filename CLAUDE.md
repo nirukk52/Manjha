@@ -1,5 +1,7 @@
 # Manjha Development Guidelines
 
+## Naming is very important for us. All naming should be domain related not technology or implementation specific.
+
 # Instructions for Using Graphiti's MCP Tools
 ## Graphiti MCP group_id to be used is "manjha"
 
@@ -107,6 +109,5 @@ Document: costs, rate limits, fallback behavior, degradation strategy.
 - ✓ Proper logging via common module
 - ✓ Spec exists in `/specs`
 - ✓ Skills reviewed and updated
-
 ## Reference
 See `.specify/memory/constitution.md` for the holy Constitution.

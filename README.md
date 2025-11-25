@@ -140,12 +140,15 @@ While others require traders to navigate dashboards and run manual analyses, Man
 
 ## Architecture & Specifications
 
-### Multi-Agent System
-- **[Multi-Agent Architecture](./specs/002-multi-agent-architecture/README.md)** - Scalable 50-100 agent architecture
-  - Three-layer pattern (LangGraph, Agents, Services)
-  - Supervisor → Specialist hierarchy
-  - Context-aware personalization
-  - Inspired by [AWS financial analysis agent pattern](https://aws.amazon.com/blogs/machine-learning/build-an-intelligent-financial-analysis-agent-with-langgraph-and-strands-agents/)
+### Agentic Architecture
+The entire app is becoming an agent. Services are tool providers, agents coordinate them.
+
+**Pattern:** `User → Agent (orchestrator) → Tools (services) → Data`
+
+- **[Multi-Agent Architecture](./specs/002-multi-agent-architecture/README.md)** - 100-agent system design
+- **[Quick Reference](./CLAUDE.md)** - Core mental model and principles
+- Three-layer pattern: Agents (orchestration) → Tools (services) → Data
+- Inspired by [AWS financial analysis agent pattern](https://aws.amazon.com/blogs/machine-learning/build-an-intelligent-financial-analysis-agent-with-langgraph-and-strands-agents/)
 
 ### Features
 - **[Finance Chat Agent](./specs/001-finance-chat-agent/spec.md)** - AI-powered financial assistant with streaming responses
@@ -155,12 +158,12 @@ While others require traders to navigate dashboards and run manual analyses, Man
 
 ## Tech Stack
 
-### Backend (Agent Intelligence)
-- **Encore.ts** - Type-safe service framework for microservices
-- **LangGraph** - Multi-agent orchestration (supervisor → specialist pattern)
-- **PostgreSQL + pgvector** - Trade data, user data, and vector search
-- **LangChain** - Agent framework and LLM tooling
-- **Graphiti (via MCP)** - Knowledge graph for building trader memory
+### Backend (Agentic System)
+- **Encore.ts** - Microservices framework (services = tool providers)
+- **OpenAI GPT-4** - Function Calling for tool coordination
+- **LangGraph** - Multi-agent orchestration (future scale)
+- **PostgreSQL + pgvector** - Data storage and vector search
+- **kite-mcp-server** - Zerodha operations (runs as sidecar)
 
 ### Frontend (Dumb Presentation)
 - **Next.js** - React framework with server components
