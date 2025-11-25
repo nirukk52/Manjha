@@ -47,7 +47,7 @@ export function ChatPanel() {
   const [input, setInput] = useState('');
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
   const [activeTab, setActiveTab] = useState<'answer' | 'chart' | 'mental-model'>('answer');
-  const [selectedConnectors, setSelectedConnectors] = useState<Connector[]>([]);
+  const [selectedConnectors, setSelectedConnectors] = useState<string[]>([]);
   const [sessionId] = useState(() => generateSessionId());
   const [showZerodhaAuth, setShowZerodhaAuth] = useState(false);
   const [pendingMessage, setPendingMessage] = useState<string | null>(null);
@@ -58,7 +58,36 @@ export function ChatPanel() {
   const isLoading = state === 'connecting' || state === 'streaming';
 
   const hasMessages = conversation.length > 0;
-  const currentOutput = conversation.length > 0 ? conversation[conversation.length - 1].output : null;
+  
+  // FIX: Wrap streaming content in expected format for DirectAnswer
+  // ChatInput does this - ChatPanel was missing it
+  const currentOutput = state === 'streaming' || state === 'complete' 
+    ? { answer: content }
+    : conversation.length > 0 ? conversation[conversation.length - 1].output : null;
+
+  // Check Zerodha connection status on page load
+  useEffect(() => {
+    const checkZerodhaStatus = async () => {
+      try {
+        const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+        const response = await fetch(`${apiBaseUrl}/zerodha/status`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ deviceId: userId }),
+        });
+        const status = await response.json();
+        
+        if (status.isConnected) {
+          console.log('[Chat] Zerodha already connected:', status.userName);
+          setConnectorStatus(prev => ({ ...prev, [Connector.ZERODHA]: 'connected' }));
+        }
+      } catch (error) {
+        console.log('[Chat] Could not check Zerodha status');
+      }
+    };
+    
+    checkZerodhaStatus();
+  }, [userId]);
 
   // Check if user just came back from OAuth
   useEffect(() => {
@@ -67,38 +96,13 @@ export function ChatPanel() {
     const error = params.get('error');
     
     if (connected === 'true') {
-      console.log('[Chat] OAuth successful! Checking connection status...');
+      console.log('[Chat] OAuth successful!');
+      setConnectorStatus(prev => ({ ...prev, [Connector.ZERODHA]: 'connected' }));
       
-      // Check Zerodha connection status
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      fetch(`${apiBaseUrl}/zerodha/connection/status`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId }),
-      })
-        .then(res => res.json())
-        .then(status => {
-          if (status.isConnected) {
-            setConnectorStatus(prev => ({ ...prev, [Connector.ZERODHA]: 'connected' }));
-            
-            // Add Zerodha to selected connectors if not already there
-            if (!selectedConnectors.includes(Connector.ZERODHA)) {
-              setSelectedConnectors(prev => [...prev, Connector.ZERODHA]);
-            }
-            
-            // If there's a pending message, send it now
-            if (pendingMessage) {
-              setInput(pendingMessage);
-              setPendingMessage(null);
-              // Trigger send after a short delay
-              setTimeout(() => {
-                const sendBtn = document.querySelector('[data-send-button]') as HTMLButtonElement;
-                sendBtn?.click();
-              }, 500);
-            }
-          }
-        })
-        .catch(err => console.error('[Chat] Failed to check status:', err));
+      // Add Zerodha to selected connectors if not already there
+      if (!selectedConnectors.includes(Connector.ZERODHA)) {
+        setSelectedConnectors(prev => [...prev, Connector.ZERODHA]);
+      }
       
       // Clean up URL
       window.history.replaceState({}, '', window.location.pathname);
@@ -111,73 +115,10 @@ export function ChatPanel() {
     }
   }, []);
 
-  // Check connection status for selected connectors
-  useEffect(() => {
-    if (selectedConnectors.includes(Connector.ZERODHA)) {
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      fetch(`${apiBaseUrl}/zerodha/connection/status`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId }),
-      })
-        .then(res => res.json())
-        .then(status => {
-          setConnectorStatus(prev => ({
-            ...prev,
-            [Connector.ZERODHA]: status.isConnected ? 'connected' : 'not_connected'
-          }));
-        })
-        .catch(err => console.error('[Chat] Status check failed:', err));
-    }
-  }, [selectedConnectors]);
-
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
     const currentInput = input.trim();
-    
-    // Check if Zerodha connector is selected
-    const hasZerodha = selectedConnectors.includes(Connector.ZERODHA);
-    
-    if (hasZerodha) {
-      // Check Zerodha connection status
-      console.log('[Chat] Zerodha selected, checking connection status...');
-      
-      try {
-        const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-        // userId already available from state
-        
-        console.log('[Chat] Calling status API:', { apiBaseUrl, userId });
-        
-        const response = await fetch(`${apiBaseUrl}/zerodha/connection/status`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId }),
-        });
-        
-        console.log('[Chat] Status response:', response.status, response.ok);
-        
-        const status = await response.json();
-        
-        console.log('[Chat] Zerodha connection status:', status);
-        
-        if (!status.isConnected) {
-          console.log('[Chat] Not connected, showing popup...');
-          setPendingMessage(currentInput);
-          setShowZerodhaAuth(true);
-          return;
-        }
-        
-        console.log('[Chat] Connected! Proceeding with message...');
-      } catch (error) {
-        console.error('[Chat] Failed to check Zerodha status:', error);
-        // If can't check status, show popup to be safe
-        console.log('[Chat] Error checking status, showing popup to be safe...');
-        setPendingMessage(currentInput);
-        setShowZerodhaAuth(true);
-        return;
-      }
-    }
 
     // Add user message to conversation
     const userMessage: ConversationItem = {
@@ -194,7 +135,8 @@ export function ChatPanel() {
       const response = await sendChatMessage({
         sessionId,
         content: currentInput,
-        userId, // Include userId so backend knows which user's Zerodha connection to use
+        userId,
+        deviceId: userId, // deviceId is the same as userId for now
         selectedConnectors: selectedConnectors.length > 0 ? selectedConnectors : undefined,
       });
 
@@ -231,48 +173,44 @@ export function ChatPanel() {
   const handleZerodhaConnect = async () => {
     try {
       const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      
+      // Get OAuth login URL from backend
       const response = await fetch(`${apiBaseUrl}/zerodha/oauth/initiate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          userId: 'demo-user', // TODO: Get real userId from auth
-          redirectUrl: window.location.origin + '/chat',
-        }),
+        body: JSON.stringify({ deviceId: userId }),
       });
       
-      if (!response.ok) {
-        throw new Error(`Failed to initiate OAuth: ${response.statusText}`);
-      }
+      const result = await response.json();
       
-      const data = await response.json();
-      
-      console.log('[Chat] OAuth URL:', data.oauthUrl);
-      
-      // Open OAuth in new window
-      window.open(data.oauthUrl, '_blank', 'width=600,height=700');
-      
-      setShowZerodhaAuth(false);
-      
-      // If there was a pending message, send it after a delay
-      if (pendingMessage) {
-        setTimeout(() => {
-          setInput(pendingMessage);
-          setPendingMessage(null);
-        }, 1000);
+      if (result.loginUrl) {
+        console.log('[Chat] Opening Zerodha OAuth:', result.loginUrl);
+        // Open OAuth popup - will redirect back to /chat?connected=true on success
+        window.open(result.loginUrl, '_blank', 'width=600,height=700');
+        setShowZerodhaAuth(false);
+      } else {
+        console.error('[Chat] No Zerodha login URL received');
+        alert('Failed to get Zerodha login URL. Please try again.');
       }
     } catch (error) {
-      console.error('[Chat] Failed to initiate OAuth:', error);
+      console.error('[Chat] Error initiating Zerodha OAuth:', error);
       alert('Failed to connect to Zerodha. Please try again.');
     }
   };
 
-  const handleConnectorClick = (connector: Connector) => {
+  const handleConnectorClick = async (connector: string) => {
+    // If clicking Zerodha and not connected, show auth popup
+    if (connector === Connector.ZERODHA && connectorStatus[Connector.ZERODHA] !== 'connected') {
+      setShowZerodhaAuth(true);
+      return;
+    }
+    
     if (!selectedConnectors.includes(connector)) {
       setSelectedConnectors(prev => [...prev, connector]);
     }
   };
 
-  const handleRemoveConnector = (connector: Connector) => {
+  const handleRemoveConnector = (connector: string) => {
     setSelectedConnectors(prev => prev.filter(c => c !== connector));
   };
 
@@ -391,7 +329,7 @@ export function ChatPanel() {
                   {/* Answer Area - Full White Background */}
                   <div className="max-h-96 overflow-y-auto bg-white">
                     <div className="h-full">
-                      {activeTab === 'answer' && <DirectAnswer output={currentOutput} />}
+                      {activeTab === 'answer' && <DirectAnswer output={currentOutput} isStreaming={state === 'streaming'} />}
                       {activeTab === 'chart' && <ChartWidget output={currentOutput} onPin={() => {}} />}
                       {activeTab === 'mental-model' && <MentalModelFlow output={currentOutput} onPin={() => {}} />}
                     </div>
