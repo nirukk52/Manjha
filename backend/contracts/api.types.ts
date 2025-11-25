@@ -31,6 +31,14 @@ export enum MessageStatus {
 }
 
 /**
+ * Connectors that can be attached to a chat.
+ * Must match frontend Connector enum.
+ */
+export enum Connector {
+  ZERODHA = 'Zerodha',
+}
+
+/**
  * Request payload for sending a chat message.
  * 
  * Why this exists: Type-safe contract for user message submission
@@ -42,6 +50,10 @@ export interface ChatMessageRequest {
   content: string;
   /** User ID for authentication and logging (stubbed for MVP) */
   userId?: string;
+  /** Device ID for connector session lookup */
+  deviceId?: string;
+  /** Selected connectors (e.g., Zerodha) */
+  selectedConnectors?: Connector[];
 }
 
 /**
@@ -140,6 +152,10 @@ export interface FinanceQuery {
   question: string;
   /** User identifier for personalization and logging */
   userId: string;
+  /** Device ID for Zerodha session lookup */
+  deviceId?: string;
+  /** Whether Zerodha connector is attached (hard check) */
+  hasZerodha?: boolean;
 }
 
 /**
@@ -207,6 +223,3 @@ export interface ChatMessage {
   /** Error details if status is ERROR */
   errorDetails?: string;
 }
-
-
-

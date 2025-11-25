@@ -15,6 +15,7 @@ import {
   AgentType,
   StreamChunk,
   ErrorCode,
+  Connector,
 } from "../contracts/api.types.js";
 import { db } from "./db.js";
 import { classify } from "../message-classifier/classifier.js";
@@ -97,11 +98,15 @@ export const send = api(
         classification_confidence: classification.confidence,
       });
       
+      // Check if Zerodha connector is attached
+      const hasZerodha = req.selectedConnectors?.includes(Connector.ZERODHA) ?? false;
+      const deviceId = req.deviceId ?? '';
+      
       return {
         messageId,
         status: MessageStatus.PENDING,
         agentType: classification.agentType,
-        streamUrl: `/chat/stream/${req.sessionId}/${messageId}?agentType=${classification.agentType}&query=${encodeURIComponent(req.content)}`,
+        streamUrl: `/chat/stream/${req.sessionId}/${messageId}?agentType=${classification.agentType}&query=${encodeURIComponent(req.content)}&deviceId=${deviceId}&hasZerodha=${hasZerodha}`,
       };
       
     } catch (error) {
@@ -137,8 +142,11 @@ export const stream = api.raw(
     const urlParts = req.url?.split('/') ?? [];
     const sessionId = urlParts[urlParts.length - 2] ?? '';
     const messageId = urlParts[urlParts.length - 1]?.split('?')[0] ?? '';
-    const agentType = new URL(req.url ?? '', `http://${req.headers.host}`).searchParams.get('agentType') as AgentType;
-    const query = new URL(req.url ?? '', `http://${req.headers.host}`).searchParams.get('query') ?? '';
+    const url = new URL(req.url ?? '', `http://${req.headers.host}`);
+    const agentType = url.searchParams.get('agentType') as AgentType;
+    const query = url.searchParams.get('query') ?? '';
+    const deviceId = url.searchParams.get('deviceId') ?? '';
+    const hasZerodha = url.searchParams.get('hasZerodha') === 'true';
     
     // Set up SSE headers
     res.writeHead(200, {
@@ -166,8 +174,8 @@ export const stream = api.raw(
       let fullResponse = '';
       
       if (agentType === AgentType.FINANCE) {
-        // Stream finance agent response
-        for await (const chunk of analyzeStreaming({ question: query, userId: 'anonymous' })) {
+        // Stream finance agent response (pass Zerodha context if connector attached)
+        for await (const chunk of analyzeStreaming({ question: query, userId: 'anonymous', deviceId, hasZerodha })) {
           fullResponse += chunk;
           
           const streamChunk: StreamChunk = {
@@ -272,4 +280,3 @@ export const stream = api.raw(
     }
   }
 );
-

@@ -1,4 +1,4 @@
-# Specification Quality Checklist: Zerodha Chat Connect
+# Specification Quality Checklist: Zerodha MCP Chat Integration
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
 **Created**: 2025-11-25
@@ -31,5 +31,8 @@
 
 ## Notes
 
-- Checklist reviewed on the day of spec creation; all criteria satisfied for planning handoff.
+- Spec is intentionally minimal per user request
+- Device-based identity (device_id) is documented as temporary approach
+- 6-hour session window chosen as reasonable balance (Zerodha sessions can last up to 12 hours)
+- Ready for `/speckit.plan`
 

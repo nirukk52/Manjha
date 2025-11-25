@@ -18,6 +18,9 @@ export interface ChatMessageRequest {
   sessionId: string;
   content: string;
   userId?: string;
+  /** Device ID for connector session lookup */
+  deviceId?: string;
+  /** Selected connectors (e.g., Zerodha) - enables connector-specific tools */
   selectedConnectors?: Connector[];
 }
 
@@ -245,4 +248,3 @@ export function getApiConfig() {
     debug: API_CONFIG.debug,
   };
 }
-
