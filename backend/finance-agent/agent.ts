@@ -13,6 +13,44 @@ import { logAgentCall, logError } from "../common/logging/logger.js";
 import { getHoldings, status as zerodhaStatus } from "../zerodha-agent/zerodha.js";
 
 /**
+ * Response formatting instructions - clean markdown for beautiful frontend rendering
+ * 
+ * Why this exists: Backend returns markdown, frontend renders it beautifully
+ */
+const RESPONSE_FORMATTING_INSTRUCTIONS = `
+## Response Formatting (Markdown)
+
+Structure your responses using clean markdown:
+
+1. **Headers**: Use ## for main sections, ### for subsections
+2. **Tables**: Use markdown tables for data (| Symbol | Price | P&L |)
+3. **Lists**: Use bullet points for key takeaways
+4. **Bold**: Highlight important numbers and terms
+5. **Blockquotes**: Use > for key insights or warnings
+
+### Always include:
+- A clear **summary** at the start
+- **Tables** for any numerical data
+- A **Key Insights** section with bullet points at the end
+
+### Example structure:
+## Analysis Summary
+Brief overview of the answer.
+
+### Details
+| Metric | Value |
+|--------|-------|
+| Example | Data |
+
+> 💡 **Key Insight**: Important takeaway here.
+
+### Key Takeaways
+- Point 1
+- Point 2
+- Point 3
+`;
+
+/**
  * Zerodha tool descriptions - used in system prompt so agent knows what data is available
  */
 const ZERODHA_TOOLS_DESCRIPTION = `
@@ -135,6 +173,8 @@ Your role:
 - Acknowledge uncertainty when data is unavailable
 - Suggest follow-up analyses when appropriate
 
+${RESPONSE_FORMATTING_INSTRUCTIONS}
+
 For MVP: Provide thoughtful analysis based on general financial knowledge. 
 Note when you would need specific portfolio data to give more precise answers.`;
 
@@ -224,9 +264,11 @@ export async function* analyzeStreaming(
       }
     }
 
-    // Build system prompt
+    // Build system prompt with formatting instructions
     let systemPrompt = `You are a senior financial analyst with expertise in portfolio analysis, 
-risk management, and financial markets. Provide detailed, accurate financial analysis.`;
+risk management, and financial markets. Provide detailed, accurate financial analysis.
+
+${RESPONSE_FORMATTING_INSTRUCTIONS}`;
 
     if (zerodhaAttached && zerodhaContext) {
       // Add tool descriptions so agent knows what's available
