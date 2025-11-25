@@ -9,8 +9,6 @@
 type AgentType = 'FINANCE' | 'GENERAL';
 type MessageStatus = 'PENDING' | 'STREAMING' | 'COMPLETE' | 'ERROR';
 
-import { Connector } from './types';
-
 /**
  * Request payload for sending a chat message
  */
@@ -20,8 +18,8 @@ export interface ChatMessageRequest {
   userId?: string;
   /** Device ID for connector session lookup */
   deviceId?: string;
-  /** Selected connectors (e.g., Zerodha) - enables connector-specific tools */
-  selectedConnectors?: Connector[];
+  /** Selected connectors (e.g., Zerodha, news sources, mental models) - enables connector-specific tools */
+  selectedConnectors?: string[];
 }
 
 /**

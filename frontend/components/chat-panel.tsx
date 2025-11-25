@@ -47,7 +47,7 @@ export function ChatPanel() {
   const [input, setInput] = useState('');
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
   const [activeTab, setActiveTab] = useState<'answer' | 'chart' | 'mental-model'>('answer');
-  const [selectedConnectors, setSelectedConnectors] = useState<Connector[]>([]);
+  const [selectedConnectors, setSelectedConnectors] = useState<string[]>([]);
   const [sessionId] = useState(() => generateSessionId());
   const [showZerodhaAuth, setShowZerodhaAuth] = useState(false);
   const [pendingMessage, setPendingMessage] = useState<string | null>(null);
@@ -198,7 +198,7 @@ export function ChatPanel() {
     }
   };
 
-  const handleConnectorClick = async (connector: Connector) => {
+  const handleConnectorClick = async (connector: string) => {
     // If clicking Zerodha and not connected, show auth popup
     if (connector === Connector.ZERODHA && connectorStatus[Connector.ZERODHA] !== 'connected') {
       setShowZerodhaAuth(true);
@@ -210,7 +210,7 @@ export function ChatPanel() {
     }
   };
 
-  const handleRemoveConnector = (connector: Connector) => {
+  const handleRemoveConnector = (connector: string) => {
     setSelectedConnectors(prev => prev.filter(c => c !== connector));
   };
 
