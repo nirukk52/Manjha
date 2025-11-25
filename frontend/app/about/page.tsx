@@ -37,19 +37,40 @@ export default function AboutPage() {
 
       <div className="relative z-10">
         {/* Navigation */}
-        <nav className="max-w-5xl mx-auto px-6 py-6 flex justify-between items-center">
-          <Link href="/" className="group flex items-center gap-3">
-             <div className="w-10 h-10 bg-[#18181b] border-2 border-black rounded-lg flex items-center justify-center font-black text-white text-xl group-hover:-rotate-3 transition-transform">
+        <nav className="max-w-5xl mx-auto px-6 py-6">
+          <div className="flex items-center justify-between">
+            {/* Logo */}
+            <div className="w-10 h-10 bg-[#18181b] border-3 border-black rounded-lg flex items-center justify-center font-black text-white text-xl">
               M
             </div>
-            <span className="font-bold text-xl tracking-tight hidden sm:block">Manjha</span>
-          </Link>
-          <div className="flex gap-4">
-             <Link href="/dashboard">
-              <Button className="bg-[#18181b] text-white border-2 border-black hover:bg-[#27272a] shadow-[4px_4px_0px_0px_#000000] hover:shadow-[2px_2px_0px_0px_#000000] hover:translate-x-[2px] hover:translate-y-[2px] transition-all">
-                Open Dashboard
-              </Button>
-            </Link>
+            
+            {/* Navigation Links */}
+            <div className="flex items-center gap-4">
+              <Link 
+                href="/" 
+                className="text-lg text-[#18181b] hover:text-[#52525b] transition-colors px-4 py-2 rounded-lg hover:bg-white/50 border-2 border-transparent hover:border-black"
+              >
+                Home
+              </Link>
+              <Link 
+                href="/dashboard" 
+                className="text-lg text-[#18181b] hover:text-[#52525b] transition-colors px-4 py-2 rounded-lg hover:bg-white/50 border-2 border-transparent hover:border-black"
+              >
+                Dashboard
+              </Link>
+              <Link 
+                href="/chat" 
+                className="text-lg text-[#18181b] hover:text-[#52525b] transition-colors px-4 py-2 rounded-lg hover:bg-white/50 border-2 border-transparent hover:border-black"
+              >
+                Chat
+              </Link>
+              <Link 
+                href="/about" 
+                className="text-lg text-white bg-[#18181b] px-4 py-2 rounded-lg border-2 border-black"
+              >
+                About
+              </Link>
+            </div>
           </div>
         </nav>
 
