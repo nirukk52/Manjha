@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { useChatStream } from '@/hooks/use-chat-stream';
 import { sendChatMessage, generateSessionId } from '@/lib/api-client';
 import { Connector } from '@/lib/types';
+import { authClient } from '@/lib/auth-client';
 
 /**
  * Gets or creates a persistent device ID for tracking user sessions
@@ -51,8 +52,14 @@ export function ChatPanel() {
   const [sessionId] = useState(() => generateSessionId());
   const [showZerodhaAuth, setShowZerodhaAuth] = useState(false);
   const [pendingMessage, setPendingMessage] = useState<string | null>(null);
+  const [pendingAuthMessage, setPendingAuthMessage] = useState<string | null>(null);
+  const [showGoogleAuth, setShowGoogleAuth] = useState(false);
   const [connectorStatus, setConnectorStatus] = useState<Record<string, 'connected' | 'not_connected'>>({});
-  const [userId] = useState(() => getDeviceId()); // Get consistent userId
+  const [deviceId] = useState(() => getDeviceId()); // Get consistent deviceId
+  
+  // BetterAuth session - reactive auth state
+  const { data: session } = authClient.useSession();
+  const userId = session?.user?.id ?? 'anonymous';
   
   const { content, state, startStream, reset } = useChatStream();
   const isLoading = state === 'connecting' || state === 'streaming';
@@ -73,7 +80,7 @@ export function ChatPanel() {
         const response = await fetch(`${apiBaseUrl}/zerodha/status`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ deviceId: userId }),
+          body: JSON.stringify({ deviceId }),
         });
         const status = await response.json();
         
@@ -87,7 +94,7 @@ export function ChatPanel() {
     };
     
     checkZerodhaStatus();
-  }, [userId]);
+  }, [deviceId]);
 
   // Check if user just came back from OAuth
   useEffect(() => {
@@ -115,30 +122,63 @@ export function ChatPanel() {
     }
   }, []);
 
-  const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+  // Retry pending message after Google sign-in completes
+  useEffect(() => {
+    if (session?.user && pendingAuthMessage) {
+      console.log('[Chat] User signed in, retrying pending message');
+      const messageToRetry = pendingAuthMessage;
+      setPendingAuthMessage(null);
+      setShowGoogleAuth(false);
+      // Small delay to ensure session is fully propagated
+      setTimeout(() => handleSend(messageToRetry), 100);
+    }
+  }, [session?.user, pendingAuthMessage]);
 
-    const currentInput = input.trim();
+  const handleGoogleSignIn = async () => {
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/chat",
+      });
+    } catch (error) {
+      console.error('[Chat] Google sign-in failed:', error);
+      alert('Failed to sign in with Google. Please try again.');
+    }
+  };
 
-    // Add user message to conversation
-    const userMessage: ConversationItem = {
-      type: 'user',
-      content: currentInput,
-      timestamp: new Date()
-    };
-    setConversation(prev => [...prev, userMessage]);
-    setInput('');
+  const handleSend = async (messageOverride?: string) => {
+    const messageContent = messageOverride ?? input.trim();
+    if (!messageContent || isLoading) return;
+
+    // Add user message to conversation (only if not a retry)
+    if (!messageOverride) {
+      const userMessage: ConversationItem = {
+        type: 'user',
+        content: messageContent,
+        timestamp: new Date()
+      };
+      setConversation(prev => [...prev, userMessage]);
+      setInput('');
+    }
     reset();
 
     try {
       // Send message to backend
       const response = await sendChatMessage({
         sessionId,
-        content: currentInput,
+        content: messageContent,
         userId,
-        deviceId: userId, // deviceId is the same as userId for now
+        deviceId,
         selectedConnectors: selectedConnectors.length > 0 ? selectedConnectors : undefined,
       });
+
+      // Check if auth is required (progressive auth gate)
+      if ('type' in response && response.type === 'AUTH_REQUIRED') {
+        console.log('[Chat] Auth required - storing message and showing Google sign-in');
+        setPendingAuthMessage(messageContent);
+        setShowGoogleAuth(true);
+        return;
+      }
 
       // Start streaming response
       startStream(response.streamUrl);
@@ -178,7 +218,7 @@ export function ChatPanel() {
       const response = await fetch(`${apiBaseUrl}/zerodha/oauth/initiate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ deviceId: userId }),
+        body: JSON.stringify({ deviceId }),
       });
       
       const result = await response.json();
@@ -227,6 +267,41 @@ export function ChatPanel() {
 
   return (
     <>
+      {/* Google Auth Popup - Progressive Auth */}
+      {showGoogleAuth && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowGoogleAuth(false)}>
+          <div className="bg-white rounded-2xl p-8 max-w-md mx-4 border-2 border-black shadow-[8px_8px_0px_0px_#000000]" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-2xl font-bold mb-4">Sign in to continue</h2>
+            <p className="text-gray-600 mb-6">
+              You've used your free message! Sign in with Google to continue chatting with Manjha.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowGoogleAuth(false);
+                  setPendingAuthMessage(null);
+                }}
+                className="flex-1 px-6 py-3 border-2 border-black rounded-lg hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleGoogleSignIn}
+                className="flex-1 px-6 py-3 bg-[#4285F4] text-white border-2 border-black rounded-lg hover:bg-[#3367D6] shadow-[4px_4px_0px_0px_#000000] flex items-center justify-center gap-2"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 24 24">
+                  <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                  <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                Sign in with Google
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Zerodha Auth Popup */}
       {showZerodhaAuth && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowZerodhaAuth(false)}>

@@ -33,6 +33,17 @@ export interface ChatMessageResponse {
 }
 
 /**
+ * Response when authentication is required (progressive auth)
+ * 
+ * Why this exists: Anonymous users get 1 free message, then must sign in
+ */
+export interface AuthRequiredResponse {
+  type: 'AUTH_REQUIRED';
+  reason: 'SECOND_MESSAGE';
+  provider: 'google';
+}
+
+/**
  * A single streaming chunk from the SSE endpoint
  */
 export interface StreamChunk {
@@ -92,12 +103,12 @@ validateConfig();
  * Why this exists: Initiates conversation with backend and gets streaming URL
  * 
  * @param request - Chat message request
- * @returns Response with streaming URL and metadata
+ * @returns Response with streaming URL and metadata, or AUTH_REQUIRED if sign-in needed
  * @throws Error with descriptive message if request fails
  */
 export async function sendChatMessage(
   request: ChatMessageRequest
-): Promise<ChatMessageResponse> {
+): Promise<ChatMessageResponse | AuthRequiredResponse> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), API_CONFIG.timeout);
 

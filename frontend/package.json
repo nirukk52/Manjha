@@ -19,6 +19,7 @@
   "dependencies": {
     "@radix-ui/react-slot": "^1.0.2",
     "@tailwindcss/typography": "^0.5.19",
+    "better-auth": "^1.4.1",
     "class-variance-authority": "^0.4.0",
     "clsx": "^1.2.1",
     "date-fns": "^3.6.0",

@@ -115,6 +115,30 @@ export enum ErrorCode {
 }
 
 /**
+ * Enum for auth requirement reasons.
+ * 
+ * Why this exists: Progressive auth - free tier users get 1 message before sign-in required
+ */
+export enum AuthRequiredReason {
+  SECOND_MESSAGE = 'SECOND_MESSAGE',
+}
+
+/**
+ * Response returned when authentication is required to continue.
+ * 
+ * Why this exists: Enables progressive auth flow - anonymous users get 1 free message,
+ * then must sign in with Google to continue chatting.
+ */
+export interface AuthRequiredResponse {
+  /** Discriminator for response type */
+  type: 'AUTH_REQUIRED';
+  /** Why authentication is required */
+  reason: AuthRequiredReason;
+  /** Suggested auth provider */
+  provider: 'google';
+}
+
+/**
  * Request payload for message classification.
  * 
  * Why this exists: Determines which agent should handle the query

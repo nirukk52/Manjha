@@ -16,6 +16,8 @@ import {
   StreamChunk,
   ErrorCode,
   Connector,
+  AuthRequiredResponse,
+  AuthRequiredReason,
 } from "../contracts/api.types.js";
 import { db } from "./db.js";
 import { classify } from "../message-classifier/classifier.js";
@@ -37,7 +39,7 @@ import { randomUUID } from "crypto";
  */
 export const send = api(
   { method: "POST", expose: true, path: "/chat/send" },
-  async (req: ChatMessageRequest): Promise<ChatMessageResponse> => {
+  async (req: ChatMessageRequest): Promise<ChatMessageResponse | AuthRequiredResponse> => {
     const startTime = performance.now();
     
     try {
@@ -59,27 +61,53 @@ export const send = api(
         throw APIError.invalidArgument("Message too long (max 5000 characters)");
       }
       
-      const userId = req.userId ?? 'anonymous'; // MVP: stub user ID
+      const userId = req.userId ?? 'anonymous';
       const messageId = randomUUID();
       
+      // Progressive auth gate: anonymous users get 1 free message
+      if (userId === 'anonymous') {
+        const messageCount = await db.queryRow<{ count: number }>`
+          SELECT COUNT(*)::int as count FROM chat_messages 
+          WHERE session_id = ${req.sessionId} AND sender = 'USER'
+        `;
+        
+        if (messageCount && messageCount.count >= 1) {
+          return {
+            type: 'AUTH_REQUIRED',
+            reason: AuthRequiredReason.SECOND_MESSAGE,
+            provider: 'google',
+          };
+        }
+      }
+      
       // Ensure session exists or create new one
-      let session = await db.queryRow<{ id: string }>`
-        SELECT id FROM chat_sessions 
-        WHERE id = ${req.sessionId} AND user_id = ${userId}
+      let session = await db.queryRow<{ id: string; user_id: string }>`
+        SELECT id, user_id FROM chat_sessions 
+        WHERE id = ${req.sessionId}
       `;
       
       if (!session) {
+        // Create new session
         await db.exec`
           INSERT INTO chat_sessions (id, user_id, status)
           VALUES (${req.sessionId}, ${userId}, 'ACTIVE')
         `;
       } else {
-        // Update last activity
-        await db.exec`
-          UPDATE chat_sessions
-          SET last_activity_at = CURRENT_TIMESTAMP
-          WHERE id = ${req.sessionId}
-        `;
+        // If session exists but user_id is 'anonymous' and we now have a real userId, link it
+        if (session.user_id === 'anonymous' && userId !== 'anonymous') {
+          await db.exec`
+            UPDATE chat_sessions
+            SET user_id = ${userId}, last_activity_at = CURRENT_TIMESTAMP
+            WHERE id = ${req.sessionId}
+          `;
+        } else {
+          // Update last activity
+          await db.exec`
+            UPDATE chat_sessions
+            SET last_activity_at = CURRENT_TIMESTAMP
+            WHERE id = ${req.sessionId}
+          `;
+        }
       }
       
       // Store user message
