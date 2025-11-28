@@ -17,7 +17,6 @@ import { createHash } from "crypto";
 // Encore secrets
 const apiKey = secret("ZerodhaApiKey");
 const apiSecret = secret("ZerodhaApiSecret");
-const redirectUrl = secret("ZerodhaRedirectUrl");
 const frontendUrl = secret("FrontendUrl");
 
 // Kite URLs
